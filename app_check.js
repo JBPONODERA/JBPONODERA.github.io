@@ -82,6 +82,29 @@
       const [y,m,d] = dateStr.split('-');
       return `${Number(y)}/${Number(m)}/${Number(d)}`;
     }
+    function getSlipNoticeLines() {
+      return [
+        '・貸出機は製品の導入検討目的での評価を前提にお客様へのお貸出しをしております。',
+        '使用感をお試しいただくものであり、保証が必要な事柄やその他の目的での使用はしないでください。',
+        '・貸出機は必ず返却期限をお守りください。また、期間の延長が必要な場合は担当営業までご連絡ください。',
+        '※状況によりご希望に添えない場合もございますので、あらかじめご了承ください。',
+        '・一度に貸出し可能な台数、または貸出し回数を制限させていただくことがございます。',
+        '・万一、貸出機を破損・紛失された場合や貸出期間を経過してもご返却がない場合、当社より商品代金を請求させていただく場合がございますのでお取り扱いには十分ご注意ください。',
+        '・個装箱や梱包袋も含めて、お貸し出し時の状態でご返却ください。',
+        '・ご返却にかかる運送費等はお客様にてご負担いただきますようお願いいたします。'
+      ];
+    }
+    function buildSlipQrSvg(qrText) {
+      try {
+        if (typeof qrcode !== 'function') return '';
+        const qr = qrcode(0, 'M');
+        qr.addData(qrText, 'Byte');
+        qr.make();
+        return qr.createSvgTag({ cellSize: 2, margin: 2, scalable: true });
+      } catch (e) {
+        return '';
+      }
+    }
     function setTodayBadge() {
       const jp = new Intl.DateTimeFormat('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit' });
       document.getElementById('todayBadge').textContent = jp.format(new Date());
@@ -330,11 +353,46 @@
       const dueDate = document.getElementById('loanDueDate').value;
       const note = document.getElementById('loanCommonNote').value.trim();
       if (!customer || !loanDraftItems.length) { alert('貸出票プレビューには貸出先と1件以上の明細が必要です。'); return ''; }
-      const rows = loanDraftItems.map(item => `<tr><td>${escapeHtml(item.productName)}</td><td>${escapeHtml(item.model)}</td><td style="text-align:center;">1</td><td>${escapeHtml(item.serial)}</td><td>${escapeHtml(item.itemNote || '')}</td></tr>`).join('');
+      const slipNo = `SL-${new Date().toISOString().slice(2,10).replace(/-/g,'')}${String(Date.now()).slice(-2)}`;
       const email = SALES_EMAILS[sales] || '';
-      return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>貸出票</title><style>@page{size:A4 portrait;margin:7mm}body{font-family:"Hiragino Sans","Yu Gothic",sans-serif;font-size:11px;color:#111;margin:0}.sheet{width:196mm;max-width:196mm;margin:0 auto}.head{display:flex;gap:12px}.left{flex:1}.right{width:250px}.title{text-align:center;font-size:20px;font-weight:700;margin:8px 0 10px}.recipient{font-size:17px;margin:0 0 10px}.meta,.items{width:100%;border-collapse:collapse}.meta td,.items th,.items td{border:1px solid #333;padding:5px 7px}.meta td:first-child{width:110px;background:#fafafa}.items{margin-top:10px;font-size:10px}.items th{background:#fafafa}.btn{border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}.actions{position:sticky;top:0;background:#f8fafc;border:1px solid #d9e2ec;border-radius:10px;padding:8px 10px;margin-bottom:10px;display:flex;gap:8px}.memo{margin-top:6px;font-size:10px}.note{font-size:9.4px;margin:1px 0}</style></head><body><div class="sheet"><div class="actions"><button class="btn" onclick="window.print()">印刷</button><button class="btn" onclick="window.close()">閉じる</button></div><div class="head"><div class="left"><div>ジャパンボーピクセル株式会社</div><div>〒220-0004 神奈川県横浜市西区北幸2丁目8-4</div><div>横浜西口KNビル9F</div><div>TEL：045-548-3566 / FAX：045-548-3711</div><div>担当：${escapeHtml(sales)}</div><div>MAIL：${escapeHtml(email)}</div></div><div class="right"><table class="meta"><tr><td>出荷日</td><td>${escapeHtml(formatDateJP(shipDate))}</td></tr><tr><td>返却予定日</td><td>${escapeHtml(formatDateJP(dueDate))}</td></tr></table></div></div><div class="title">貸出票</div><div class="recipient">${escapeHtml(customer)}</div><table class="items"><tr><th style="width:38%">品名</th><th style="width:24%">型番</th><th style="width:8%">数量</th><th style="width:18%">S/N</th><th style="width:12%">備考</th></tr>${rows}</table>${note ? `<div class="memo">伝票備考：${escapeHtml(note)}</div>` : ''}</div></body></html>`;
+      const notes = getSlipNoticeLines();
+      const qrLines = [
+        'BOPIXEL DEMO SLIP',
+        `SLIP:${slipNo}`,
+        `CUSTOMER:${customer}`,
+        `SALES:${sales}`,
+        `SHIP:${shipDate}`,
+        `DUE:${dueDate}`,
+        ...loanDraftItems.map((item, idx) => `ITEM${idx + 1}:${item.model}|${item.serial}`),
+        note ? `NOTE:${note}` : ''
+      ].filter(Boolean);
+      const qrText = qrLines.join('\n');
+      const qrSvg = buildSlipQrSvg(qrText);
+      const rows = loanDraftItems.map(item => `
+        <tr>
+          <td>${escapeHtml(item.productName)}</td>
+          <td>${escapeHtml(item.model)}</td>
+          <td style="text-align:center;">1</td>
+          <td>${escapeHtml(item.serial)}</td>
+          <td>${escapeHtml(item.itemNote || '')}</td>
+        </tr>`).join('');
+      const emptyRows = Array.from({ length: Math.max(0, 5 - loanDraftItems.length) }).map(() => '<tr><td></td><td></td><td></td><td></td><td></td></tr>').join('');
+      return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>貸出票</title><style>
+        @page { size: A4 portrait; margin: 7mm; }
+        body{font-family:"Hiragino Sans","Yu Gothic",sans-serif;background:#fff;color:#111;margin:0;padding:0;font-size:11px;line-height:1.35}
+        .sheet{width:196mm;max-width:196mm;margin:0 auto;padding:0}
+        .slip-no{font-size:11px;margin-bottom:8px}.head{display:flex;gap:12px;align-items:flex-start}.left{flex:1}.right{width:250px}
+        .addr{font-size:10.8px;line-height:1.45}.title{text-align:center;font-weight:700;font-size:20px;letter-spacing:.1em;margin:10px 0 12px}.recipient{font-size:17px;margin:0 0 10px 0}
+        .meta{width:100%;border-collapse:collapse;font-size:11px}.meta td{border:1px solid #333;padding:5px 8px}.meta td:first-child{width:110px;background:#fafafa}
+        .items{width:100%;border-collapse:collapse;margin-top:10px;font-size:10px}.items th,.items td{border:1px solid #333;padding:4px 6px;vertical-align:top}.items th{background:#fafafa}.items td{height:19px}
+        .notes-title{font-size:15px;font-weight:700;margin:12px 0 6px}.note{font-size:9.4px;line-height:1.42;margin:0 0 2px}.memo{font-size:10px;margin-top:6px}
+        .print-actions{position:sticky;top:0;background:#f8fafc;border:1px solid #d9e2ec;border-radius:10px;padding:8px 10px;margin:0 0 10px;display:flex;gap:8px;flex-wrap:wrap}
+        .btn{border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}.primary{background:#0f766e;color:#fff}.ghost{background:#fff;border:1px solid #d9e2ec;color:#172b4d}
+        .qr-box{margin-top:8px;border:1px solid #cbd5e1;border-radius:10px;padding:6px;text-align:center}.qr-svg svg{width:34mm;height:34mm;display:block;margin:0 auto}.qr-caption{font-size:8.8px;line-height:1.3;margin-top:4px;color:#334155;word-break:break-word}
+        @media print {.print-actions{display:none}.sheet{width:auto;max-width:none}.title{font-size:18px;margin:8px 0 10px}.recipient{font-size:16px}.items td{height:18px}.note{font-size:9px}}
+      </style></head><body><div class="sheet"><div class="print-actions"><button class="btn primary" onclick="window.print()">印刷</button><button class="btn ghost" onclick="window.close()">閉じる</button></div><div class="slip-no">No.${escapeHtml(slipNo)}</div><div class="head"><div class="left addr"><div>ジャパンボーピクセル株式会社</div><div>〒220-0004 神奈川県横浜市西区北幸2丁目8-4</div><div>横浜西口KNビル9F</div><div>TEL：045-548-3566 / FAX：045-548-3711</div><div>Website：https://bopixel.co.jp/</div><div style="margin-top:6px;">担当：${escapeHtml(sales || '')}</div><div>MAIL：${escapeHtml(email)}</div></div><div class="right"><table class="meta"><tr><td>貸出票No.</td><td>${escapeHtml(slipNo)}</td></tr><tr><td>出荷日</td><td>${escapeHtml(formatDateJP(shipDate))}</td></tr><tr><td>返却予定日</td><td>${escapeHtml(formatDateJP(dueDate))}</td></tr></table>${qrSvg ? `<div class="qr-box"><div class="qr-svg">${qrSvg}</div><div class="qr-caption">貸出票情報QR（メール・チャット共有用）</div></div>` : `<div class="qr-box"><div class="qr-caption">QR生成に失敗しました。印刷前に再読み込みしてください。</div></div>`}</div></div><div class="title">貸出票</div><div class="recipient">${escapeHtml(customer || '')}</div><table class="items"><tr><th style="width:38%">品名</th><th style="width:24%">型番</th><th style="width:8%">数量</th><th style="width:18%">S/N</th><th style="width:12%">備考</th></tr>${rows}${emptyRows}</table>${note ? `<div class="memo">伝票備考：${escapeHtml(note)}</div>` : ''}<div class="notes-title">デモ機のご使用にあたって</div>${notes.map(x => `<p class="note">${escapeHtml(x)}</p>`).join('')}</div></body></html>`;
     }
-    function previewLoanSlip() {
+        function previewLoanSlip() {
       const html = buildSlipHtml(); if (!html) return;
       const w = window.open('', '_blank'); w.document.write(html); w.document.close();
     }
@@ -441,9 +499,25 @@
       alert(lines.join('\n'));
     }
 
-    function getDevicesByFilter(keyword = '', status = '') {
+    function getActiveDevices() {
+      return state.devices.filter(d => d.status !== '削除');
+    }
+    function getNormalVisibleDevices() {
+      return getActiveDevices();
+    }
+    function resetDashboardFilters() {
+      dashboardQuickFilter = '';
+      const keywordEl = document.getElementById('deviceKeyword');
+      const statusEl = document.getElementById('deviceStatusFilter');
+      if (keywordEl) keywordEl.value = '';
+      if (statusEl) statusEl.value = '';
+      document.querySelectorAll('.mobile-filter-btn').forEach(btn => btn.classList.toggle('active', (btn.dataset.filter || '') === ''));
+    }
+    function getDevicesByFilter(keyword = '', status = '', options = {}) {
       const normalizedKeyword = String(keyword || '').trim().toLowerCase();
-      return state.devices.filter(d => {
+      const includeDeleted = !!options.includeDeleted;
+      const source = includeDeleted ? state.devices.slice() : getActiveDevices();
+      return source.filter(d => {
         const hitKeyword = !normalizedKeyword || [d.model, d.serial, d.productName, d.location, d.notes, d.sourceType, d.currentLoanSlipNo || ''].join(' ').toLowerCase().includes(normalizedKeyword);
         const hitStatus = !status || d.status === status;
         return hitKeyword && hitStatus;
@@ -461,6 +535,10 @@
     function updateDeviceStatus(deviceId, nextStatus) {
       const device = state.devices.find(d => d.id === deviceId);
       if (!device) return;
+      if (device.status === '貸出中' && nextStatus === '削除') {
+        alert('貸出中の個体は管理画面から削除できません。返却後に削除してください。');
+        return;
+      }
       device.status = nextStatus;
       if (nextStatus !== '貸出中') device.currentLoanSlipNo = '';
       if (nextStatus === '在庫あり' || nextStatus === '修理中' || nextStatus === '削除') {
@@ -473,7 +551,10 @@
       dashboardQuickFilter = status;
       document.querySelectorAll('.mobile-filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === status));
       document.querySelectorAll('#summaryCards .summary-card').forEach(card => card.classList.toggle('active', (card.dataset.filter || '') === status));
+      const statusEl = document.getElementById('deviceStatusFilter');
+      if (statusEl) statusEl.value = status;
       renderMobileDeviceList();
+      renderDeviceTable();
       const dashboard = document.getElementById('screen-dashboard');
       if (window.innerWidth <= 720 && dashboard && !dashboard.classList.contains('hidden')) {
         document.getElementById('mobileDeviceList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -482,38 +563,41 @@
     function renderMobileDeviceList() {
       const container = document.getElementById('mobileDeviceList');
       if (!container) return;
-      const rows = getDevicesByFilter('', dashboardQuickFilter);
+      const rows = dashboardQuickFilter ? getDevicesByFilter('', dashboardQuickFilter) : getNormalVisibleDevices();
       const title = document.getElementById('mobileListTitle');
       const count = document.getElementById('mobileListCount');
-      if (title) title.textContent = dashboardQuickFilter ? `${labelForDashboardFilter(dashboardQuickFilter)} 一覧` : '全個体一覧';
+      if (title) title.textContent = dashboardQuickFilter ? `${labelForDashboardFilter(dashboardQuickFilter)} 一覧` : '通常一覧';
       if (count) count.textContent = `${rows.length}件`;
       container.className = 'compact-device-list';
-      container.innerHTML = rows.map(d => `<div class="compact-device-card"><div class="compact-device-head"><div style="min-width:0;"><div class="compact-model">${escapeHtml(d.model)}</div><div class="compact-product">${escapeHtml(d.productName)}</div></div><span class="status-pill ${statusClass(d.status)}">${escapeHtml(d.status)}</span></div><div class="compact-meta"><div class="compact-inline"><span><strong>S/N</strong> ${escapeHtml(d.serial)}</span><span><strong>場所</strong> ${escapeHtml(d.location || '-')}</span></div><div class="compact-inline"><span><strong>貸出票</strong> ${escapeHtml(d.currentLoanSlipNo || '-')}</span><span><strong>棚卸</strong> ${escapeHtml(formatDateJP(d.lastAuditDate || ''))}</span></div>${d.notes ? `<div><strong>備考</strong> ${escapeHtml(d.notes)}</div>` : ''}</div><div class="compact-actions"><button type="button" class="mini-action ok" data-set-status="在庫あり" data-device-id="${escapeHtml(d.id)}">在庫あり</button><button type="button" class="mini-action warn" data-set-status="修理中" data-device-id="${escapeHtml(d.id)}">修理中</button><button type="button" class="mini-action danger" data-set-status="削除" data-device-id="${escapeHtml(d.id)}">削除</button></div></div>`).join('');
+      container.innerHTML = rows.map(d => `<div class="compact-device-card"><div class="compact-device-head"><div style="min-width:0;"><div class="compact-model">${escapeHtml(d.model)}</div><div class="compact-product">${escapeHtml(d.productName)}</div></div><span class="status-pill ${statusClass(d.status)}">${escapeHtml(d.status)}</span></div><div class="compact-meta"><div class="compact-inline"><span><strong>S/N</strong> ${escapeHtml(d.serial)}</span><span><strong>場所</strong> ${escapeHtml(d.location || '-')}</span><span><strong>貸出票</strong> ${escapeHtml(d.currentLoanSlipNo || '-')}</span></div>${d.notes ? `<div><strong>備考</strong> ${escapeHtml(d.notes)}</div>` : ''}</div><div class="compact-actions"><button type="button" class="mini-action ok" data-set-status="在庫あり" data-device-id="${escapeHtml(d.id)}">在庫あり</button><button type="button" class="mini-action warn" data-set-status="修理中" data-device-id="${escapeHtml(d.id)}">修理中</button><button type="button" class="mini-action danger" data-set-status="削除" data-device-id="${escapeHtml(d.id)}" ${d.status === '貸出中' ? 'disabled' : ''}>削除</button></div></div>`).join('');
       if (!rows.length) container.innerHTML = '<div class="compact-device-card"><div class="muted">該当する個体はありません。</div></div>';
     }
-    function renderSummary() {
-      const total = state.devices.length;
-      const inStock = state.devices.filter(d => d.status === '在庫あり').length;
-      const onLoan = state.devices.filter(d => d.status === '貸出中').length;
-      const repair = state.devices.filter(d => d.status === '修理中').length;
+        function renderSummary() {
+      const visible = getNormalVisibleDevices();
+      const total = visible.length;
+      const inStock = visible.filter(d => d.status === '在庫あり').length;
+      const onLoan = visible.filter(d => d.status === '貸出中').length;
+      const repair = visible.filter(d => d.status === '修理中').length;
       const deleted = state.devices.filter(d => d.status === '削除').length;
-      const gap = state.devices.filter(d => d.status === '棚卸差異').length;
+      const gap = visible.filter(d => d.status === '棚卸差異').length;
       const cards = [
-        ['総個体数', total, '登録済みSN', ''],
+        ['総個体数', total, deleted ? `通常一覧 / 削除 ${deleted}` : '通常一覧', ''],
         ['在庫あり', inStock, '貸出可能', '在庫あり'],
         ['貸出中', onLoan, '顧客貸出中', '貸出中'],
-        ['修理/削除', repair + deleted, '使用停止中', '修理中']
+        ['修理中', repair, '使用停止中', '修理中']
       ];
       document.getElementById('summaryCards').innerHTML = cards.map(([title,num,sub,filter]) => `<button type="button" class="summary-card clickable ${(filter || '') === dashboardQuickFilter ? 'active' : ''}" data-filter="${escapeHtml(filter || '')}"><div class="muted tiny">${escapeHtml(title)}</div><div class="num">${num}</div><div class="muted tiny">${escapeHtml(sub)}</div></button>`).join('');
       document.getElementById('syncBadge').textContent = gap ? `棚卸差異 ${gap}件` : 'ローカル試作版';
       document.getElementById('syncBadge').className = `status-pill ${gap ? 'danger' : 'slate'}`;
     }
     function renderDeviceTable() {
-      const keyword = document.getElementById('deviceKeyword') ? document.getElementById('deviceKeyword').value : '';
+      const keyword = document.getElementById('deviceKeyword') ? document.getElementById('deviceKeyword').value.trim() : '';
       const status = document.getElementById('deviceStatusFilter') ? document.getElementById('deviceStatusFilter').value : '';
-      const rows = getDevicesByFilter(keyword, status);
+      const rows = (!keyword && !status) ? getNormalVisibleDevices() : getDevicesByFilter(keyword, status);
       const body = document.getElementById('deviceTableBody');
-      body.innerHTML = rows.map(d => `<tr><td><span class="status-pill ${statusClass(d.status)}">${escapeHtml(d.status)}</span></td><td><strong>${escapeHtml(d.model)}</strong></td><td>${escapeHtml(d.serial)}</td><td>${escapeHtml(d.productName)}</td><td>${escapeHtml(d.location)}</td><td>${escapeHtml(d.currentLoanSlipNo || '-')}</td><td>${escapeHtml(formatDateJP(d.lastAuditDate))}</td><td>${escapeHtml(d.sourceType)}</td><td>${escapeHtml(d.notes || '-')}</td><td><div class="status-actions"><button type="button" class="mini-action ok" data-set-status="在庫あり" data-device-id="${escapeHtml(d.id)}">在庫あり</button><button type="button" class="mini-action warn" data-set-status="修理中" data-device-id="${escapeHtml(d.id)}">修理中</button><button type="button" class="mini-action danger" data-set-status="削除" data-device-id="${escapeHtml(d.id)}">削除</button></div></td></tr>`).join('');
+      const countBadge = document.getElementById('pcListCount');
+      if (countBadge) countBadge.textContent = `${rows.length}件`;
+      body.innerHTML = rows.map(d => `<tr><td><span class="status-pill ${statusClass(d.status)}">${escapeHtml(d.status)}</span></td><td><strong>${escapeHtml(d.model)}</strong></td><td>${escapeHtml(d.serial)}</td><td>${escapeHtml(d.productName)}</td><td>${escapeHtml(d.location)}</td><td>${escapeHtml(d.currentLoanSlipNo || '-')}</td><td>${escapeHtml(formatDateJP(d.lastAuditDate))}</td><td>${escapeHtml(d.sourceType)}</td><td>${escapeHtml(d.notes || '-')}</td><td><div class="status-actions"><button type="button" class="mini-action ok" data-set-status="在庫あり" data-device-id="${escapeHtml(d.id)}">在庫あり</button><button type="button" class="mini-action warn" data-set-status="修理中" data-device-id="${escapeHtml(d.id)}">修理中</button><button type="button" class="mini-action danger" data-set-status="削除" data-device-id="${escapeHtml(d.id)}" ${d.status === '貸出中' ? 'disabled' : ''}>削除</button></div></td></tr>`).join('');
       if (!rows.length) body.innerHTML = '<tr><td colspan="10">該当データがありません。</td></tr>';
     }
 
@@ -558,7 +642,7 @@
     }
 
     document.querySelectorAll('.nav-btn, .quick-btn').forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.nav)));
-    document.getElementById('deviceSearchBtn').addEventListener('click', renderDeviceTable);
+    document.getElementById('deviceSearchBtn').addEventListener('click', () => { dashboardQuickFilter = ''; renderDeviceTable(); renderSummary(); renderMobileDeviceList(); });
     document.getElementById('summaryCards').addEventListener('click', event => { const card = event.target.closest('.summary-card'); if (!card) return; setDashboardQuickFilter(card.dataset.filter || ''); });
     const mobileFilterWrap = document.getElementById('mobileStatusFilters'); if (mobileFilterWrap) mobileFilterWrap.addEventListener('click', event => { const btn = event.target.closest('.mobile-filter-btn'); if (!btn) return; setDashboardQuickFilter(btn.dataset.filter || ''); });
     document.addEventListener('click', event => { const btn = event.target.closest('[data-set-status]'); if (!btn) return; const nextStatus = btn.dataset.setStatus || ''; const deviceId = btn.dataset.deviceId || ''; if (!deviceId || !nextStatus) return; updateDeviceStatus(deviceId, nextStatus); });
@@ -597,9 +681,11 @@
 
     setTodayBadge();
     toggleLoanSalesCustom();
+    resetDashboardFilters();
     renderLoanDraft();
     renderSummary();
     renderDeviceTable();
     renderMobileDeviceList();
     renderAuditBox();
   
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
