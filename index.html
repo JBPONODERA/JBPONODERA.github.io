@@ -37,7 +37,7 @@
       -webkit-tap-highlight-color: transparent;
       overscroll-behavior-y: contain;
     }
-    .app { max-width: 1220px; margin: 0 auto; padding: env(safe-area-inset-top) 12px 12px 92px; }
+    .app { max-width: 1220px; margin: 0 auto; padding: env(safe-area-inset-top) 12px 12px calc(144px + env(safe-area-inset-bottom)); }
     .hero {
       position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px);
       background: rgba(245,247,251,.88); padding: 6px 0 8px;
@@ -70,6 +70,14 @@
     .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
     .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
     .summary-card { border:1px solid var(--line); border-radius:16px; padding:14px; background:linear-gradient(180deg,#fff 0,#f8fafc 100%); }
+    .summary-card.clickable { cursor:pointer; }
+    .summary-card.active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,.12); background: linear-gradient(180deg,#eff6ff 0,#ffffff 100%); }
+    .mobile-filter-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .mobile-filter-btn { appearance:none; border:none; border-radius:999px; padding:8px 12px; font-size:13px; font-weight:800; background:#e2e8f0; color:var(--text); cursor:pointer; }
+    .mobile-filter-btn.active { background:var(--primary); color:#fff; }
+    .mobile-count-line { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
+    .mobile-count-line strong { font-size:14px; }
+    .mobile-list-note { font-size:12px; color:var(--muted); }
     .summary-card .num { font-size:28px; font-weight:800; margin-top:4px; }
     .status-pill { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:700; }
     .ok { background:#ecfdf3; color:var(--ok); }
@@ -113,7 +121,7 @@
     .desktop-table th { position:sticky; top:0; background:#f8fafc; z-index:1; }
     .hidden { display:none !important; }
     .bottom-nav {
-      position:fixed; left:50%; transform:translateX(-50%); bottom:10px; width:min(1220px,calc(100% - 20px));
+      position:fixed; left:50%; transform:translateX(-50%); bottom:calc(10px + env(safe-area-inset-bottom)); width:min(1220px,calc(100% - 20px));
       background:rgba(255,255,255,.95); backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow);
       display:grid; grid-template-columns:repeat(5,1fr); overflow:hidden; z-index:20;
     }
@@ -126,7 +134,7 @@
       .grid-3 { grid-template-columns:1fr; }
     }
     @media (max-width: 720px) {
-      .app { padding-left:10px; padding-right:10px; }
+      .app { padding-left:10px; padding-right:10px; padding-bottom:calc(156px + env(safe-area-inset-bottom)); }
       .grid-2, .grid-3, .grid-4 { grid-template-columns:1fr; }
       .kvs { grid-template-columns:1fr; }
       .hero { padding:4px 0 6px; }
@@ -177,6 +185,20 @@
       <div class="section card">
         <div class="section-title"><h2>サマリー</h2><span class="status-pill ok">自動集計</span></div>
         <div class="grid-4" id="summaryCards"></div>
+      </div>
+
+      <div class="section card mobile-only">
+        <div class="section-title"><h2>在庫・貸出状況一覧</h2><span class="status-pill warning">スマホ確認用</span></div>
+        <div class="mobile-list-note">遠隔地からでも、現在の在庫あり / 貸出中 / 点検待ち / 修理中 の個体状況を確認できます。</div>
+        <div class="mobile-filter-row" id="mobileStatusFilters">
+          <button class="mobile-filter-btn active" data-filter="">すべて</button>
+          <button class="mobile-filter-btn" data-filter="在庫あり">在庫あり</button>
+          <button class="mobile-filter-btn" data-filter="貸出中">貸出中</button>
+          <button class="mobile-filter-btn" data-filter="点検待ち">点検待ち</button>
+          <button class="mobile-filter-btn" data-filter="修理中">修理中</button>
+        </div>
+        <div class="mobile-count-line"><strong id="mobileListTitle">全個体一覧</strong><span class="mini-badge" id="mobileListCount">0件</span></div>
+        <div class="list" id="mobileDeviceList"></div>
       </div>
 
       <div class="section card desktop-only">
@@ -424,6 +446,7 @@
     let loanDraftItems = [];
     let currentReturnDeviceId = '';
     let currentAuditSession = { scannedIds: [], scannedAt: todayStr() };
+    let dashboardQuickFilter = '';
 
     function defaultState() {
       return {
@@ -468,6 +491,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       renderSummary();
       renderDeviceTable();
+      renderMobileDeviceList();
       renderAuditBox();
     }
     function todayStr() {
@@ -842,6 +866,38 @@
       alert(lines.join('\n'));
     }
 
+    function getDevicesByFilter(keyword = '', status = '') {
+      const normalizedKeyword = String(keyword || '').trim().toLowerCase();
+      return state.devices.filter(d => {
+        const hitKeyword = !normalizedKeyword || [d.model, d.serial, d.productName, d.location, d.notes, d.sourceType, d.currentLoanSlipNo || ''].join(' ').toLowerCase().includes(normalizedKeyword);
+        const hitStatus = !status || d.status === status;
+        return hitKeyword && hitStatus;
+      });
+    }
+    function labelForDashboardFilter(status) {
+      return status || 'すべて';
+    }
+    function setDashboardQuickFilter(status = '') {
+      dashboardQuickFilter = status;
+      document.querySelectorAll('.mobile-filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === status));
+      document.querySelectorAll('#summaryCards .summary-card').forEach(card => card.classList.toggle('active', (card.dataset.filter || '') === status));
+      renderMobileDeviceList();
+      const dashboard = document.getElementById('screen-dashboard');
+      if (window.innerWidth <= 720 && dashboard && !dashboard.classList.contains('hidden')) {
+        document.getElementById('mobileDeviceList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    function renderMobileDeviceList() {
+      const container = document.getElementById('mobileDeviceList');
+      if (!container) return;
+      const rows = getDevicesByFilter('', dashboardQuickFilter);
+      const title = document.getElementById('mobileListTitle');
+      const count = document.getElementById('mobileListCount');
+      if (title) title.textContent = dashboardQuickFilter ? `${labelForDashboardFilter(dashboardQuickFilter)} 一覧` : '全個体一覧';
+      if (count) count.textContent = `${rows.length}件`;
+      container.innerHTML = rows.map(d => `<div class="list-item"><div class="list-item-top"><div><h3>${escapeHtml(d.productName)}</h3><div class="muted tiny">${escapeHtml(d.model)} / S/N ${escapeHtml(d.serial)}</div></div><span class="status-pill ${d.status === '在庫あり' ? 'ok' : d.status === '貸出中' ? 'warning' : d.status === '修理中' || d.status === '棚卸差異' ? 'danger' : 'slate'}">${escapeHtml(d.status)}</span></div><div class="kvs"><div class="kv"><span>保管場所</span>${escapeHtml(d.location || '-')}</div><div class="kv"><span>現在貸出票</span>${escapeHtml(d.currentLoanSlipNo || '-')}</div><div class="kv"><span>取得区分</span>${escapeHtml(d.sourceType || '-')}</div><div class="kv"><span>最終棚卸</span>${escapeHtml(formatDateJP(d.lastAuditDate || ''))}</div><div class="kv" style="grid-column:1/-1;"><span>備考</span>${escapeHtml(d.notes || '-')}</div></div></div>`).join('');
+      if (!rows.length) container.innerHTML = '<div class="list-item"><div class="muted">該当する個体はありません。</div></div>';
+    }
     function renderSummary() {
       const total = state.devices.length;
       const inStock = state.devices.filter(d => d.status === '在庫あり').length;
@@ -850,23 +906,19 @@
       const inspect = state.devices.filter(d => d.status === '点検待ち').length;
       const gap = state.devices.filter(d => d.status === '棚卸差異').length;
       const cards = [
-        ['総個体数', total, '登録済みSN'],
-        ['在庫あり', inStock, '貸出可能'],
-        ['貸出中', onLoan, '顧客貸出中'],
-        ['点検/修理', inspect + repair, '使用停止中']
+        ['総個体数', total, '登録済みSN', ''],
+        ['在庫あり', inStock, '貸出可能', '在庫あり'],
+        ['貸出中', onLoan, '顧客貸出中', '貸出中'],
+        ['点検/修理', inspect + repair, '使用停止中', '点検待ち']
       ];
-      document.getElementById('summaryCards').innerHTML = cards.map(([title,num,sub]) => `<div class="summary-card"><div class="muted tiny">${escapeHtml(title)}</div><div class="num">${num}</div><div class="muted tiny">${escapeHtml(sub)}</div></div>`).join('');
+      document.getElementById('summaryCards').innerHTML = cards.map(([title,num,sub,filter]) => `<button type="button" class="summary-card clickable ${(filter || '') === dashboardQuickFilter ? 'active' : ''}" data-filter="${escapeHtml(filter || '')}"><div class="muted tiny">${escapeHtml(title)}</div><div class="num">${num}</div><div class="muted tiny">${escapeHtml(sub)}</div></button>`).join('');
       document.getElementById('syncBadge').textContent = gap ? `棚卸差異 ${gap}件` : 'ローカル試作版';
       document.getElementById('syncBadge').className = `status-pill ${gap ? 'danger' : 'slate'}`;
     }
     function renderDeviceTable() {
-      const keyword = document.getElementById('deviceKeyword') ? document.getElementById('deviceKeyword').value.trim().toLowerCase() : '';
+      const keyword = document.getElementById('deviceKeyword') ? document.getElementById('deviceKeyword').value : '';
       const status = document.getElementById('deviceStatusFilter') ? document.getElementById('deviceStatusFilter').value : '';
-      const rows = state.devices.filter(d => {
-        const hitKeyword = !keyword || [d.model, d.serial, d.productName, d.location, d.notes, d.sourceType].join(' ').toLowerCase().includes(keyword);
-        const hitStatus = !status || d.status === status;
-        return hitKeyword && hitStatus;
-      });
+      const rows = getDevicesByFilter(keyword, status);
       const body = document.getElementById('deviceTableBody');
       body.innerHTML = rows.map(d => `<tr><td>${escapeHtml(d.status)}</td><td>${escapeHtml(d.model)}</td><td>${escapeHtml(d.serial)}</td><td>${escapeHtml(d.productName)}</td><td>${escapeHtml(d.location)}</td><td>${escapeHtml(d.currentLoanSlipNo || '-')}</td><td>${escapeHtml(formatDateJP(d.lastAuditDate))}</td><td>${escapeHtml(d.sourceType)}</td><td>${escapeHtml(d.notes || '-')}</td></tr>`).join('');
       if (!rows.length) body.innerHTML = '<tr><td colspan="9">該当データがありません。</td></tr>';
@@ -888,7 +940,7 @@
         try {
           const parsed = JSON.parse(reader.result);
           if (!parsed.devices || !parsed.slips || !parsed.logs) throw new Error('invalid');
-          state = parsed;
+          state = normalizeStateShape(parsed);
           saveState();
           alert('JSONを取り込みました。');
         } catch (e) {
@@ -914,6 +966,8 @@
 
     document.querySelectorAll('.nav-btn, .quick-btn').forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.nav)));
     document.getElementById('deviceSearchBtn').addEventListener('click', renderDeviceTable);
+    document.getElementById('summaryCards').addEventListener('click', event => { const card = event.target.closest('.summary-card'); if (!card) return; setDashboardQuickFilter(card.dataset.filter || ''); });
+    const mobileFilterWrap = document.getElementById('mobileStatusFilters'); if (mobileFilterWrap) mobileFilterWrap.addEventListener('click', event => { const btn = event.target.closest('.mobile-filter-btn'); if (!btn) return; setDashboardQuickFilter(btn.dataset.filter || ''); });
     document.getElementById('exportJsonBtn').addEventListener('click', exportJson);
     document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
     document.getElementById('importJsonInput').addEventListener('change', e => importJsonFile(e.target.files[0]));
@@ -952,6 +1006,7 @@
     renderLoanDraft();
     renderSummary();
     renderDeviceTable();
+    renderMobileDeviceList();
     renderAuditBox();
   </script>
 
