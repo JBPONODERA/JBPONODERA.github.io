@@ -255,10 +255,12 @@
           </div>
           <canvas id="scanCanvas" class="hidden"></canvas>
           <div class="btn-row">
-            <button class="secondary" id="startScanBtn">カメラ読取開始</button>
-            <button class="ghost" id="stopScanBtn">カメラ停止</button>
+            <button class="primary" id="clipboardBtn">クリップボードから取込</button>
+            <button class="ghost" id="iosGuideBtn">iPhone標準QRの使い方</button>
+            <button class="secondary" id="startScanBtn">ライブ読取開始（参考）</button>
+            <button class="ghost" id="stopScanBtn">ライブ読取停止</button>
             <button class="warn" id="stillScanBtn">静止画高精度読取</button>
-            <button class="primary" id="parseBtn">型番/SNを抽出</button>
+            <button class="ghost" id="parseBtn">型番/SNを抽出</button>
             <label class="file-btn">画像から読取<input id="imageQrInput" type="file" accept="image/*" capture="environment" class="hidden" /></label>
           </div>
           <div class="scan-tools">
@@ -271,14 +273,14 @@
             </div>
             <button class="warn" id="boostScanBtn">拡大読取ON</button>
           </div>
-          <div id="scanStatus" class="scan-status">カメラ未起動</div>
-          <div class="hint">10mm QRはかなり小さいため、枠の中央にQRだけを大きく入れ、ズームを 3.0x〜4.0x にすると安定しやすいです。難しい場合は「静止画高精度読取」を試してください。</div>
+          <div id="scanStatus" class="scan-status">推奨フロー：iPhone標準QRで読取 → コピー → クリップボードから取込</div>
+          <div class="hint">10mm QRはかなり小さいため、ライブ読取よりも iPhone標準QRアプリで読んだ結果を本画面へ取り込む方式を推奨します。</div>
           <div class="chips">
             <button class="chip sample-qr" data-sample="BC-SCS2M10X1H_23050060">実サンプル形式</button>
             <button class="chip sample-qr" data-sample="MODEL=4K-CAM-200;SN=JP2026-000128;BOX=DEMO;LOT=A01">サンプル2</button>
             <button class="chip sample-qr" data-sample="型番:XR-Display-55 / S/N:SN5520268891 / 区分:DEMO">サンプル3</button>
           </div>
-          <div class="sample-note" style="margin-top:10px;">実サンプル画像は OpenCV で「BC-SCS2M10X1H_23050060」と読み取り確認済みです。HTTPSよりも、QRサイズ・反射・ピントの影響が大きいと考えられます。画面中央にQRを寄せ、ズームを 2.0x〜3.0x に上げると改善しやすいです。</div>
+          <div class="sample-note" style="margin-top:10px;">実サンプル画像は OpenCV で「BC-SCS2M10X1H_23050060」と読み取り確認済みです。運用上は、iPhone標準のコードスキャナまたはカメラでQRを読み、結果文字列をコピーして本画面に取り込む方式が最も安定します。</div>
         </div>
 
         <div class="grid-2">
@@ -836,6 +838,35 @@
       const el = document.getElementById('scanStatus');
       if (el) el.textContent = text;
     }
+    function showIosQrGuide() {
+      alert([
+        '【iPhone標準QRの推奨手順】',
+        '1. コントロールセンターの「コードスキャナー」またはカメラを起動',
+        '2. QRを読み取って、表示された文字列をコピー',
+        '3. このPWAへ戻る',
+        '4. 「クリップボードから取込」を押す',
+        '',
+        '※ QRの内容が URL ではなく「BC-SCS2M10X1H_23050060」のような文字列であることを想定しています。'
+      ].join('\n'));
+    }
+    async function importFromClipboard() {
+      if (!navigator.clipboard || !navigator.clipboard.readText) {
+        alert('このブラウザではクリップボード読取を利用できません。QR結果を長押しコピー後、QRコード内容欄へ貼り付けてください。');
+        return;
+      }
+      try {
+        const text = (await navigator.clipboard.readText()).trim();
+        if (!text) {
+          alert('クリップボードに文字列がありません。先にiPhone標準QRで読み取った結果をコピーしてください。');
+          return;
+        }
+        document.getElementById('qrInput').value = text;
+        fillParsed();
+        updateScanStatus('クリップボードから取込完了');
+      } catch (e) {
+        alert('クリップボードから読み取れませんでした。QR結果を手動で貼り付けてください。');
+      }
+    }
     function updateZoomValue(value) {
       document.getElementById('zoomValue').textContent = `${Number(value).toFixed(1)}x`;
     }
@@ -1059,6 +1090,8 @@
     document.getElementById('searchReturnBtn').addEventListener('click', searchReturn);
     document.getElementById('completeReturnBtn').addEventListener('click', completeReturn);
     document.getElementById('prepareReceiveBtn').addEventListener('click', prepareReceiveMemo);
+    document.getElementById('clipboardBtn').addEventListener('click', importFromClipboard);
+    document.getElementById('iosGuideBtn').addEventListener('click', showIosQrGuide);
     document.getElementById('startScanBtn').addEventListener('click', startCamera);
     document.getElementById('stopScanBtn').addEventListener('click', stopCamera);
     document.getElementById('stillScanBtn').addEventListener('click', captureAndDecodeStill);
