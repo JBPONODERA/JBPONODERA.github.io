@@ -1,4 +1,4 @@
-const CACHE_NAME = 'demo-device-master-pwa-v1';
+const CACHE_NAME = 'demo-device-master-pwa-v1-7';
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,9 @@ const ASSETS = [
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './lib/jsqr.min.js'
+  './lib/jsqr.min.js',
+  './lib/qrcode.js',
+  './lib/qrcode_UTF8.js'
 ];
 
 self.addEventListener('install', event => {
