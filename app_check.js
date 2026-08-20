@@ -27,7 +27,7 @@
         devices: [
           { id: 'DV-001', model: 'BC-GC65M12X4-F', serial: '22080102', productName: inferProductName('BC-GC65M12X4-F'), status: '在庫あり', location: 'デモ機倉庫', sourceType: '初期棚卸', notes: '付属ACアダプタ同梱', lastAuditDate: '', currentLoanSlipNo: '' },
           { id: 'DV-002', model: 'BC-SCS2M10X1H', serial: '23050060', productName: inferProductName('BC-SCS2M10X1H'), status: '貸出中', location: '貸出先', sourceType: '初期棚卸', notes: '実QRサンプル', lastAuditDate: '2026-08-15', currentLoanSlipNo: 'SL-26082001' },
-          { id: 'DV-003', model: 'BL-GM9KTD12X4-M58', serial: '24010011', productName: inferProductName('BL-GM9KTD12X4-M58'), status: '点検待ち', location: 'デモ機倉庫', sourceType: '製品在庫から転用', notes: '返却後点検待ち', lastAuditDate: '2026-08-10', currentLoanSlipNo: '' }
+          { id: 'DV-003', model: 'BL-GM9KTD12X4-M58', serial: '24010011', productName: inferProductName('BL-GM9KTD12X4-M58'), status: '修理中', location: 'デモ機倉庫', sourceType: '製品在庫から転用', notes: '返却後メンテ待ち', lastAuditDate: '2026-08-10', currentLoanSlipNo: '' }
         ],
         slips: [
           { slipNo: 'SL-26082001', customer: '株式会社ヒューブレイン / 柊様', sales: '竹越', shipDate: '2026-08-20', dueDate: '2026-09-20', note: 'デモ評価貸出', itemIds: ['DV-002'], status: '貸出中' }
@@ -44,6 +44,7 @@
       base.logs = Array.isArray(base.logs) ? base.logs : [];
       base.devices = base.devices.map(device => ({
         ...device,
+        status: device.status === '点検待ち' ? '修理中' : device.status === '除外' ? '削除' : (device.status || '在庫あり'),
         productName: inferProductName(device.model) || device.productName || '',
         location: device.location || 'デモ機倉庫',
         sourceType: device.sourceType || '手動登録',
@@ -451,6 +452,23 @@
     function labelForDashboardFilter(status) {
       return status || 'すべて';
     }
+    function statusClass(status) {
+      if (status === '在庫あり') return 'ok';
+      if (status === '貸出中') return 'warning';
+      if (status === '修理中' || status === '棚卸差異' || status === '削除') return 'danger';
+      return 'slate';
+    }
+    function updateDeviceStatus(deviceId, nextStatus) {
+      const device = state.devices.find(d => d.id === deviceId);
+      if (!device) return;
+      device.status = nextStatus;
+      if (nextStatus !== '貸出中') device.currentLoanSlipNo = '';
+      if (nextStatus === '在庫あり' || nextStatus === '修理中' || nextStatus === '削除') {
+        device.location = nextStatus === '削除' ? '管理対象外' : (device.location && device.location !== '貸出先' ? device.location : 'デモ機倉庫');
+      }
+      logAction('管理画面ステータス変更', device, `管理画面から ${nextStatus} に変更`);
+      saveState();
+    }
     function setDashboardQuickFilter(status = '') {
       dashboardQuickFilter = status;
       document.querySelectorAll('.mobile-filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === status));
@@ -469,21 +487,22 @@
       const count = document.getElementById('mobileListCount');
       if (title) title.textContent = dashboardQuickFilter ? `${labelForDashboardFilter(dashboardQuickFilter)} 一覧` : '全個体一覧';
       if (count) count.textContent = `${rows.length}件`;
-      container.innerHTML = rows.map(d => `<div class="list-item"><div class="list-item-top"><div><h3>${escapeHtml(d.productName)}</h3><div class="muted tiny">${escapeHtml(d.model)} / S/N ${escapeHtml(d.serial)}</div></div><span class="status-pill ${d.status === '在庫あり' ? 'ok' : d.status === '貸出中' ? 'warning' : d.status === '修理中' || d.status === '棚卸差異' ? 'danger' : 'slate'}">${escapeHtml(d.status)}</span></div><div class="kvs"><div class="kv"><span>保管場所</span>${escapeHtml(d.location || '-')}</div><div class="kv"><span>現在貸出票</span>${escapeHtml(d.currentLoanSlipNo || '-')}</div><div class="kv"><span>取得区分</span>${escapeHtml(d.sourceType || '-')}</div><div class="kv"><span>最終棚卸</span>${escapeHtml(formatDateJP(d.lastAuditDate || ''))}</div><div class="kv" style="grid-column:1/-1;"><span>備考</span>${escapeHtml(d.notes || '-')}</div></div></div>`).join('');
-      if (!rows.length) container.innerHTML = '<div class="list-item"><div class="muted">該当する個体はありません。</div></div>';
+      container.className = 'compact-device-list';
+      container.innerHTML = rows.map(d => `<div class="compact-device-card"><div class="compact-device-head"><div style="min-width:0;"><div class="compact-model">${escapeHtml(d.model)}</div><div class="compact-product">${escapeHtml(d.productName)}</div></div><span class="status-pill ${statusClass(d.status)}">${escapeHtml(d.status)}</span></div><div class="compact-meta"><div class="compact-inline"><span><strong>S/N</strong> ${escapeHtml(d.serial)}</span><span><strong>場所</strong> ${escapeHtml(d.location || '-')}</span></div><div class="compact-inline"><span><strong>貸出票</strong> ${escapeHtml(d.currentLoanSlipNo || '-')}</span><span><strong>棚卸</strong> ${escapeHtml(formatDateJP(d.lastAuditDate || ''))}</span></div>${d.notes ? `<div><strong>備考</strong> ${escapeHtml(d.notes)}</div>` : ''}</div><div class="compact-actions"><button type="button" class="mini-action ok" data-set-status="在庫あり" data-device-id="${escapeHtml(d.id)}">在庫あり</button><button type="button" class="mini-action warn" data-set-status="修理中" data-device-id="${escapeHtml(d.id)}">修理中</button><button type="button" class="mini-action danger" data-set-status="削除" data-device-id="${escapeHtml(d.id)}">削除</button></div></div>`).join('');
+      if (!rows.length) container.innerHTML = '<div class="compact-device-card"><div class="muted">該当する個体はありません。</div></div>';
     }
     function renderSummary() {
       const total = state.devices.length;
       const inStock = state.devices.filter(d => d.status === '在庫あり').length;
       const onLoan = state.devices.filter(d => d.status === '貸出中').length;
       const repair = state.devices.filter(d => d.status === '修理中').length;
-      const inspect = state.devices.filter(d => d.status === '点検待ち').length;
+      const deleted = state.devices.filter(d => d.status === '削除').length;
       const gap = state.devices.filter(d => d.status === '棚卸差異').length;
       const cards = [
         ['総個体数', total, '登録済みSN', ''],
         ['在庫あり', inStock, '貸出可能', '在庫あり'],
         ['貸出中', onLoan, '顧客貸出中', '貸出中'],
-        ['点検/修理', inspect + repair, '使用停止中', '点検待ち']
+        ['修理/削除', repair + deleted, '使用停止中', '修理中']
       ];
       document.getElementById('summaryCards').innerHTML = cards.map(([title,num,sub,filter]) => `<button type="button" class="summary-card clickable ${(filter || '') === dashboardQuickFilter ? 'active' : ''}" data-filter="${escapeHtml(filter || '')}"><div class="muted tiny">${escapeHtml(title)}</div><div class="num">${num}</div><div class="muted tiny">${escapeHtml(sub)}</div></button>`).join('');
       document.getElementById('syncBadge').textContent = gap ? `棚卸差異 ${gap}件` : 'ローカル試作版';
@@ -494,8 +513,8 @@
       const status = document.getElementById('deviceStatusFilter') ? document.getElementById('deviceStatusFilter').value : '';
       const rows = getDevicesByFilter(keyword, status);
       const body = document.getElementById('deviceTableBody');
-      body.innerHTML = rows.map(d => `<tr><td>${escapeHtml(d.status)}</td><td>${escapeHtml(d.model)}</td><td>${escapeHtml(d.serial)}</td><td>${escapeHtml(d.productName)}</td><td>${escapeHtml(d.location)}</td><td>${escapeHtml(d.currentLoanSlipNo || '-')}</td><td>${escapeHtml(formatDateJP(d.lastAuditDate))}</td><td>${escapeHtml(d.sourceType)}</td><td>${escapeHtml(d.notes || '-')}</td></tr>`).join('');
-      if (!rows.length) body.innerHTML = '<tr><td colspan="9">該当データがありません。</td></tr>';
+      body.innerHTML = rows.map(d => `<tr><td><span class="status-pill ${statusClass(d.status)}">${escapeHtml(d.status)}</span></td><td><strong>${escapeHtml(d.model)}</strong></td><td>${escapeHtml(d.serial)}</td><td>${escapeHtml(d.productName)}</td><td>${escapeHtml(d.location)}</td><td>${escapeHtml(d.currentLoanSlipNo || '-')}</td><td>${escapeHtml(formatDateJP(d.lastAuditDate))}</td><td>${escapeHtml(d.sourceType)}</td><td>${escapeHtml(d.notes || '-')}</td><td><div class="status-actions"><button type="button" class="mini-action ok" data-set-status="在庫あり" data-device-id="${escapeHtml(d.id)}">在庫あり</button><button type="button" class="mini-action warn" data-set-status="修理中" data-device-id="${escapeHtml(d.id)}">修理中</button><button type="button" class="mini-action danger" data-set-status="削除" data-device-id="${escapeHtml(d.id)}">削除</button></div></td></tr>`).join('');
+      if (!rows.length) body.innerHTML = '<tr><td colspan="10">該当データがありません。</td></tr>';
     }
 
     function exportJson() {
@@ -542,6 +561,7 @@
     document.getElementById('deviceSearchBtn').addEventListener('click', renderDeviceTable);
     document.getElementById('summaryCards').addEventListener('click', event => { const card = event.target.closest('.summary-card'); if (!card) return; setDashboardQuickFilter(card.dataset.filter || ''); });
     const mobileFilterWrap = document.getElementById('mobileStatusFilters'); if (mobileFilterWrap) mobileFilterWrap.addEventListener('click', event => { const btn = event.target.closest('.mobile-filter-btn'); if (!btn) return; setDashboardQuickFilter(btn.dataset.filter || ''); });
+    document.addEventListener('click', event => { const btn = event.target.closest('[data-set-status]'); if (!btn) return; const nextStatus = btn.dataset.setStatus || ''; const deviceId = btn.dataset.deviceId || ''; if (!deviceId || !nextStatus) return; updateDeviceStatus(deviceId, nextStatus); });
     document.getElementById('exportJsonBtn').addEventListener('click', exportJson);
     document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
     document.getElementById('importJsonInput').addEventListener('change', e => importJsonFile(e.target.files[0]));
