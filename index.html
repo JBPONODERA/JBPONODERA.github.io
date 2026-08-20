@@ -111,6 +111,11 @@
       box-shadow: 0 0 0 9999px rgba(15,23,42,.18) inset;
     }
     .sample-note { border-left:4px solid var(--primary-2); background:#f8fffe; padding:10px 12px; border-radius:10px; font-size:12px; color:var(--muted); }
+    .scan-tools { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-top:10px; }
+    .scan-status { font-size:12px; color:var(--muted); margin-top:6px; }
+    .range-wrap { display:flex; align-items:center; gap:10px; }
+    .range-wrap input[type="range"] { flex:1; }
+    .range-value { min-width:48px; text-align:right; font-weight:700; color:var(--text); }
     .pill-tabs { display:flex; gap:8px; flex-wrap:wrap; }
     .pill-tabs button { border:1px solid var(--line); background:#f8fafc; border-radius:999px; padding:8px 12px; font-weight:700; cursor:pointer; color:var(--muted); }
     .pill-tabs button.active { background:#e6fffb; color:var(--primary); border-color:#99f6e4; }
@@ -255,12 +260,23 @@
             <button class="primary" id="parseBtn">型番/SNを抽出</button>
             <label class="file-btn">画像から読取<input id="imageQrInput" type="file" accept="image/*" capture="environment" class="hidden" /></label>
           </div>
+          <div class="scan-tools">
+            <div>
+              <label for="zoomRange">読取ズーム</label>
+              <div class="range-wrap">
+                <input id="zoomRange" type="range" min="1" max="4" step="0.1" value="2" />
+                <span id="zoomValue" class="range-value">2.0x</span>
+              </div>
+            </div>
+            <button class="warn" id="boostScanBtn">拡大読取ON</button>
+          </div>
+          <div id="scanStatus" class="scan-status">カメラ未起動</div>
           <div class="chips">
             <button class="chip sample-qr" data-sample="BC-SCS2M10X1H_23050060">実サンプル形式</button>
             <button class="chip sample-qr" data-sample="MODEL=4K-CAM-200;SN=JP2026-000128;BOX=DEMO;LOT=A01">サンプル2</button>
             <button class="chip sample-qr" data-sample="型番:XR-Display-55 / S/N:SN5520268891 / 区分:DEMO">サンプル3</button>
           </div>
-          <div class="sample-note" style="margin-top:10px;">実サンプル画像は OpenCV で「BC-SCS2M10X1H_23050060」と読み取り確認済みです。HTTPSよりも、QRサイズ・反射・ピントの影響が大きいと考えられます。</div>
+          <div class="sample-note" style="margin-top:10px;">実サンプル画像は OpenCV で「BC-SCS2M10X1H_23050060」と読み取り確認済みです。HTTPSよりも、QRサイズ・反射・ピントの影響が大きいと考えられます。画面中央にQRを寄せ、ズームを 2.0x〜3.0x に上げると改善しやすいです。</div>
         </div>
 
         <div class="grid-2">
@@ -361,9 +377,11 @@
     let state = loadState();
     let currentCondition = '再貸出可';
     let mediaStream = null;
+    let currentTrack = null;
     let scanTimer = null;
     let currentReturnRef = null;
     let draftItems = [];
+    let boostedScan = true;
 
     function defaultState() {
       return {
@@ -811,18 +829,106 @@
     function escapeHtml(str) { return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
     function escapeJs(str) { return String(str).replace(/['\\]/g, '\\$&'); }
 
+    function updateScanStatus(text) {
+      const el = document.getElementById('scanStatus');
+      if (el) el.textContent = text;
+    }
+    function updateZoomValue(value) {
+      document.getElementById('zoomValue').textContent = `${Number(value).toFixed(1)}x`;
+    }
+    async function setupZoomControl(track) {
+      const range = document.getElementById('zoomRange');
+      updateZoomValue(range.value);
+      if (!track || !track.getCapabilities) {
+        updateScanStatus('カメラ起動中 / ズーム制御未対応');
+        return;
+      }
+      const caps = track.getCapabilities();
+      if (!caps.zoom) {
+        updateScanStatus('カメラ起動中 / ズーム制御未対応');
+        return;
+      }
+      range.min = caps.zoom.min || 1;
+      range.max = Math.min(caps.zoom.max || 4, 6);
+      range.step = caps.zoom.step || 0.1;
+      const preferred = Math.min(Math.max(2, Number(range.min)), Number(range.max));
+      range.value = preferred;
+      updateZoomValue(range.value);
+      await applyCameraZoom(preferred);
+      updateScanStatus(`カメラ起動中 / ズーム対応 ${preferred.toFixed(1)}x`);
+    }
+    async function applyCameraZoom(value) {
+      updateZoomValue(value);
+      if (!currentTrack || !currentTrack.applyConstraints || !currentTrack.getCapabilities) return;
+      const caps = currentTrack.getCapabilities();
+      if (!caps.zoom) return;
+      const clamped = Math.max(caps.zoom.min || 1, Math.min(caps.zoom.max || value, Number(value)));
+      try {
+        await currentTrack.applyConstraints({ advanced: [{ zoom: clamped }] });
+        updateScanStatus(`カメラ起動中 / ズーム ${clamped.toFixed(1)}x`);
+      } catch (e) {
+        updateScanStatus('カメラ起動中 / ズーム変更失敗');
+      }
+    }
+    function tryDecodeImageData(imageData) {
+      return window.jsQR ? window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' }) : null;
+    }
+    async function detectNative(detector, source) {
+      try {
+        const codes = await detector.detect(source);
+        return codes && codes.length && codes[0].rawValue ? codes[0].rawValue : '';
+      } catch (e) {
+        return '';
+      }
+    }
+    async function decodeFromSource(source, srcW, srcH, detector, canvas, ctx) {
+      const roiBase = boostedScan ? [1.0, 0.84, 0.68, 0.54, 0.42, 0.32] : [1.0, 0.74, 0.54];
+      const filters = boostedScan
+        ? ['none', 'grayscale(1) contrast(1.35)', 'grayscale(1) contrast(1.9) brightness(1.08)']
+        : ['none', 'grayscale(1) contrast(1.25)'];
+      const targetWidths = boostedScan ? [1280, 1600, 1920] : [1280];
+      for (const roi of roiBase) {
+        const sw = Math.max(160, Math.floor(srcW * roi));
+        const sh = Math.max(160, Math.floor(srcH * roi));
+        const sx = Math.floor((srcW - sw) / 2);
+        const sy = Math.floor((srcH - sh) / 2);
+        for (const targetW of targetWidths) {
+          const scale = targetW / sw;
+          const targetH = Math.max(160, Math.floor(sh * scale));
+          canvas.width = targetW;
+          canvas.height = targetH;
+          for (const filter of filters) {
+            ctx.save();
+            ctx.filter = filter;
+            ctx.drawImage(source, sx, sy, sw, sh, 0, 0, targetW, targetH);
+            ctx.restore();
+            if (detector) {
+              const nativeCanvas = await detectNative(detector, canvas);
+              if (nativeCanvas) return nativeCanvas;
+            }
+            const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = tryDecodeImageData(img);
+            if (code && code.data) return code.data;
+          }
+        }
+      }
+      return '';
+    }
     async function startCamera() {
       const video = document.getElementById('cameraPreview');
       const reticle = document.getElementById('scanReticle');
       if (!navigator.mediaDevices?.getUserMedia) { alert('このブラウザではカメラ機能を利用できません。'); return; }
       try {
-        mediaStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' }, width:{ ideal:1920 }, height:{ ideal:1080 } }, audio:false });
+        updateScanStatus('カメラ起動中...');
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' }, width:{ ideal:2560 }, height:{ ideal:1440 } }, audio:false });
+        currentTrack = mediaStream.getVideoTracks()[0] || null;
         video.srcObject = mediaStream;
         video.style.display = 'block';
         reticle.style.display = 'block';
         await video.play();
+        await setupZoomControl(currentTrack);
         startDecodeLoop(video);
-      } catch (e) { alert('カメラを起動できませんでした。権限設定をご確認ください。'); }
+      } catch (e) { updateScanStatus('カメラ起動失敗'); alert('カメラを起動できませんでした。権限設定をご確認ください。'); }
     }
     function startDecodeLoop(video) {
       const canvas = document.getElementById('scanCanvas');
@@ -830,65 +936,57 @@
       const hasNative = 'BarcodeDetector' in window;
       let detector = null;
       if (hasNative) detector = new BarcodeDetector({ formats:['qr_code'] });
+      let attempts = 0;
       if (scanTimer) clearInterval(scanTimer);
       scanTimer = setInterval(async () => {
         if (!video.videoWidth || !video.videoHeight) return;
+        attempts += 1;
         try {
-          if (hasNative) {
-            const codes = await detector.detect(video);
-            if (codes.length && codes[0].rawValue) {
-              document.getElementById('qrInput').value = codes[0].rawValue;
+          if (detector) {
+            const raw = await detectNative(detector, video);
+            if (raw) {
+              document.getElementById('qrInput').value = raw;
               fillParsed();
               stopCamera();
               return;
             }
           }
-          const sw = Math.floor(video.videoWidth * 0.68);
-          const sh = Math.floor(video.videoHeight * 0.68);
-          const sx = Math.floor((video.videoWidth - sw) / 2);
-          const sy = Math.floor((video.videoHeight - sh) / 2);
-          const targetW = 960;
-          const scale = targetW / sw;
-          const targetH = Math.floor(sh * scale);
-          canvas.width = targetW;
-          canvas.height = targetH;
-          ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetW, targetH);
-          const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const code = window.jsQR ? window.jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' }) : null;
-          if (code && code.data) {
-            document.getElementById('qrInput').value = code.data;
+          const decoded = await decodeFromSource(video, video.videoWidth, video.videoHeight, detector, canvas, ctx);
+          if (decoded) {
+            document.getElementById('qrInput').value = decoded;
             fillParsed();
             stopCamera();
+            return;
+          }
+          if (attempts % 5 === 0) {
+            updateScanStatus(`読取中... 中央に寄せてください / ${boostedScan ? '拡大読取ON' : '標準読取'}`);
           }
         } catch (e) {}
-      }, 300);
+      }, 350);
     }
     function stopCamera() {
       if (scanTimer) clearInterval(scanTimer); scanTimer = null;
       if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+      currentTrack = null;
       const video = document.getElementById('cameraPreview');
       const reticle = document.getElementById('scanReticle');
       video.style.display = 'none';
       reticle.style.display = 'none';
       video.srcObject = null;
+      updateScanStatus('カメラ停止中');
     }
     function decodeImageFile(file) {
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
         const img = new Image();
-        img.onload = () => {
+        img.onload = async () => {
           const canvas = document.getElementById('scanCanvas');
           const ctx = canvas.getContext('2d', { willReadFrequently: true });
-          const maxW = 1200;
-          const scale = Math.min(1, maxW / img.width);
-          canvas.width = Math.floor(img.width * scale);
-          canvas.height = Math.floor(img.height * scale);
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const code = window.jsQR ? window.jsQR(data.data, data.width, data.height, { inversionAttempts: 'attemptBoth' }) : null;
-          if (code && code.data) {
-            document.getElementById('qrInput').value = code.data;
+          const detector = 'BarcodeDetector' in window ? new BarcodeDetector({ formats:['qr_code'] }) : null;
+          const decoded = await decodeFromSource(img, img.width, img.height, detector, canvas, ctx);
+          if (decoded) {
+            document.getElementById('qrInput').value = decoded;
             fillParsed();
           } else {
             alert('画像からQRを読み取れませんでした。QRが大きく写るよう再撮影してください。');
@@ -914,6 +1012,13 @@
     document.getElementById('prepareReceiveBtn').addEventListener('click', prepareReceiveMemo);
     document.getElementById('startScanBtn').addEventListener('click', startCamera);
     document.getElementById('stopScanBtn').addEventListener('click', stopCamera);
+    document.getElementById('zoomRange').addEventListener('input', e => applyCameraZoom(e.target.value));
+    document.getElementById('boostScanBtn').addEventListener('click', () => {
+      boostedScan = !boostedScan;
+      document.getElementById('boostScanBtn').textContent = boostedScan ? '拡大読取ON' : '拡大読取OFF';
+      document.getElementById('boostScanBtn').className = boostedScan ? 'warn' : 'ghost';
+      updateScanStatus(`読取モード切替 / ${boostedScan ? '拡大読取ON' : '標準読取'}`);
+    });
     document.getElementById('sales').addEventListener('change', toggleSalesCustom);
     document.getElementById('adminSearchBtn').addEventListener('click', renderAdminTable);
     document.getElementById('imageQrInput').addEventListener('change', e => decodeImageFile(e.target.files[0]));
@@ -924,6 +1029,8 @@
     document.querySelectorAll('.sample-qr').forEach(btn => btn.addEventListener('click', () => { document.getElementById('qrInput').value = btn.dataset.sample; fillParsed(); }));
     document.querySelectorAll('#conditionTabs button').forEach(btn => btn.addEventListener('click', () => { currentCondition = btn.dataset.cond; document.querySelectorAll('#conditionTabs button').forEach(x => x.classList.toggle('active', x === btn)); }));
 
+    updateZoomValue(document.getElementById('zoomRange').value);
+    updateScanStatus('カメラ未起動');
     setTodayBadge();
     updateStandaloneState();
     renderDraftItems();
