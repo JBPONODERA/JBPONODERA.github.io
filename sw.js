@@ -1,11 +1,13 @@
-const CACHE_NAME = 'demo-device-pwa-v2';
+const CACHE_NAME = 'demo-device-pwa-v3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './sw.js',
   './icons/icon-180.png',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './lib/jsqr.min.js'
 ];
 
 self.addEventListener('install', event => {

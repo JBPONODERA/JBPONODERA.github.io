@@ -38,32 +38,21 @@
       overscroll-behavior-y: contain;
     }
     .app { max-width: 900px; margin: 0 auto; padding: env(safe-area-inset-top) 16px 96px; }
-    .hero {
-      position: sticky; top: 0; z-index: 5; backdrop-filter: blur(12px);
-      background: rgba(245,247,251,.86); padding: 14px 0 10px;
-    }
-    .hero-card {
-      background: linear-gradient(135deg, #0f766e, #0ea5a4 55%, #2563eb);
-      color: #fff; border-radius: 24px; padding: 18px 18px 16px; box-shadow: var(--shadow);
-    }
+    .hero { position: sticky; top: 0; z-index: 5; backdrop-filter: blur(12px); background: rgba(245,247,251,.86); padding: 14px 0 10px; }
+    .hero-card { background: linear-gradient(135deg, #0f766e, #0ea5a4 55%, #2563eb); color: #fff; border-radius: 24px; padding: 18px 18px 16px; box-shadow: var(--shadow); }
     .hero-top { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:12px; }
-    .badge {
-      display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.22);
-      padding:6px 10px; border-radius:999px; font-size:12px;
-    }
+    .badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.22); padding:6px 10px; border-radius:999px; font-size:12px; }
     h1 { margin:0; font-size:22px; line-height:1.25; }
     .subtitle { margin:6px 0 0; font-size:13px; opacity:.94; line-height:1.6; }
     .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; }
-    .quick-btn {
-      appearance:none; border:none; color:#fff; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18);
-      border-radius:16px; padding:12px 10px; text-align:left; font-weight:700; cursor:pointer;
-    }
+    .quick-btn { appearance:none; border:none; color:#fff; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); border-radius:16px; padding:12px 10px; text-align:left; font-weight:700; cursor:pointer; }
     .quick-btn small { display:block; margin-top:4px; font-size:11px; font-weight:500; opacity:.9; }
     .section { margin-top:18px; }
     .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); }
     .section-title { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
     .section-title h2 { margin:0; font-size:18px; }
-    .muted { color:var(--muted); } .tiny { font-size:12px; }
+    .muted { color:var(--muted); }
+    .tiny { font-size:12px; }
     .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
     label { display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
@@ -81,22 +70,18 @@
     button.danger { background:var(--danger); color:#fff; }
     button.ghost { background:#eef4f7; color:var(--text); border:1px solid var(--line); }
     .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-    .chip {
-      background:#f1f5f9; color:var(--text); border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:13px; cursor:pointer;
-    }
+    .chip { background:#f1f5f9; color:var(--text); border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:13px; cursor:pointer; }
     .status { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:700; }
-    .ok { background:#ecfdf3; color:var(--ok); } .warning { background:#fff7ed; color:var(--warn); } .bad { background:#fef2f2; color:var(--danger); }
+    .ok { background:#ecfdf3; color:var(--ok); }
+    .warning { background:#fff7ed; color:var(--warn); }
+    .bad { background:#fef2f2; color:var(--danger); }
     .list { display:grid; gap:10px; }
     .list-item { border:1px solid var(--line); border-radius:16px; padding:14px; background:#fff; }
     .list-item-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px; }
     .list-item h3 { font-size:16px; margin:0 0 4px; }
     .kvs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 14px; font-size:13px; }
     .kv span:first-child { color:var(--muted); display:block; margin-bottom:2px; }
-    .bottom-nav {
-      position:fixed; left:50%; transform:translateX(-50%); bottom:12px; width:min(900px,calc(100% - 24px));
-      background:rgba(255,255,255,.95); backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:22px;
-      box-shadow:var(--shadow); display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden; z-index:10;
-    }
+    .bottom-nav { position:fixed; left:50%; transform:translateX(-50%); bottom:12px; width:min(900px,calc(100% - 24px)); background:rgba(255,255,255,.95); backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden; z-index:10; }
     .nav-btn { border:none; background:transparent; padding:12px 8px; font-weight:700; font-size:12px; color:var(--muted); cursor:pointer; }
     .nav-btn.active { color:var(--primary); background:#eefcf9; }
     .hidden { display:none !important; }
@@ -111,6 +96,7 @@
     .install-tip { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; border-radius:16px; padding:12px 14px; margin-top:14px; }
     .install-tip strong { display:block; margin-bottom:4px; }
     .standalone-badge { background:#ecfdf3; color:#166534; border:1px solid #bbf7d0; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:700; }
+    .hint { margin-top: 8px; font-size: 12px; color: var(--muted); }
     @media (max-width: 720px) {
       .quick-grid, .grid-2, .grid-3, .two-actions { grid-template-columns:1fr; }
       .kvs { grid-template-columns:1fr; }
@@ -124,9 +110,9 @@
       <div class="hero-card">
         <div class="hero-top">
           <div>
-            <div class="badge">正式PWA試作版</div>
+            <div class="badge">正式PWA試作版 v2</div>
             <h1>デモ機貸出管理</h1>
-            <p class="subtitle">ホーム画面追加を前提に、iPhoneでアプリらしく使いやすい構成へ調整した版です。</p>
+            <p class="subtitle">iPhone向けのホーム画面追加、QR読取改善、貸出票フォーマット対応を反映した版です。</p>
           </div>
           <div class="badge" id="todayBadge">日付</div>
         </div>
@@ -153,23 +139,14 @@
 
       <div class="section card">
         <div class="section-title">
-          <h2>想定ユースケース</h2>
-          <span class="status ok">営業スマホ向け</span>
+          <h2>今回の反映内容</h2>
+          <span class="status ok">修正版</span>
         </div>
-        <div class="grid-3">
-          <div class="list-item"><h3>① 在庫確認</h3><div class="muted tiny">FLAMで倉庫「デモ機」の在庫を確認</div></div>
-          <div class="list-item"><h3>② QR読取</h3><div class="muted tiny">外箱QRから型番・シリアルを取得</div></div>
-          <div class="list-item"><h3>③ 貸出・返却</h3><div class="muted tiny">必要情報だけスマホ画面で登録</div></div>
-        </div>
-      </div>
-
-      <div class="section card">
-        <div class="section-title"><h2>この版のPWA対応</h2></div>
         <div class="list">
-          <div class="list-item">ホーム画面追加用アイコンとmanifestを追加</div>
-          <div class="list-item">Service Workerによる基本キャッシュ対応</div>
-          <div class="list-item">iPhone向けのApple Web Appメタタグ追加</div>
-          <div class="list-item">ホーム画面起動状態の表示</div>
+          <div class="list-item">QR読取を BarcodeDetector 非対応端末でも動くよう、jsQR のフォールバックを追加</div>
+          <div class="list-item">「型番_SN」形式の抽出ルールを優先実装</div>
+          <div class="list-item">担当営業を 竹越 / 森田 / 小野寺 / 北野 / 自由記述 に変更</div>
+          <div class="list-item">出荷票プレビューを添付Word「貸出票.docx」に合わせたレイアウトへ変更</div>
         </div>
       </div>
     </section>
@@ -179,34 +156,45 @@
         <div class="section-title"><h2>貸出登録</h2><span class="status ok">STEP 1</span></div>
         <div class="scan-box">
           <label for="qrInput">QRコード内容</label>
-          <textarea id="qrInput" placeholder="例: MODEL=BP-CM1000;SN=JP2026-000128;BOX=DEMO;LOT=A01"></textarea>
+          <textarea id="qrInput" placeholder="例: BC-SCS2M10X1H_23050060"></textarea>
           <video id="cameraPreview" class="camera" autoplay playsinline muted></video>
+          <canvas id="scanCanvas" class="hidden"></canvas>
           <div class="btn-row">
             <button class="secondary" id="startScanBtn">カメラ読取開始</button>
             <button class="ghost" id="stopScanBtn">カメラ停止</button>
             <button class="primary" id="parseBtn">型番/SNを抽出</button>
           </div>
           <div class="chips">
-            <button class="chip sample-qr" data-sample="MODEL=4K-CAM-200;SN=JP2026-000128;BOX=DEMO;LOT=A01">サンプル1</button>
-            <button class="chip sample-qr" data-sample="型番:XR-Display-55 / S/N:SN5520268891 / 区分:DEMO">サンプル2</button>
-            <button class="chip sample-qr" data-sample="DEMO|MODEL=MIC-SET-01|SERIAL=M25082026">サンプル3</button>
+            <button class="chip sample-qr" data-sample="BC-SCS2M10X1H_23050060">サンプル1</button>
+            <button class="chip sample-qr" data-sample="MODEL=4K-CAM-200;SN=JP2026-000128;BOX=DEMO;LOT=A01">サンプル2</button>
+            <button class="chip sample-qr" data-sample="型番:XR-Display-55 / S/N:SN5520268891 / 区分:DEMO">サンプル3</button>
           </div>
-          <div class="sample-note" style="margin-top:10px;">実機ではSafariでカメラ許可を有効にしてお試しください。</div>
+          <div class="sample-note" style="margin-top:10px;">iPhone Safariでは BarcodeDetector 非対応のため、jsQR で動画フレームを解析します。HTTPS公開とカメラ許可が必要です。</div>
         </div>
 
         <div class="grid-2">
           <div><label for="modelNo">型番</label><input id="modelNo" placeholder="自動抽出 or 手入力" /></div>
           <div><label for="serialNo">シリアル番号</label><input id="serialNo" placeholder="自動抽出 or 手入力" /></div>
-          <div><label for="customer">貸出先</label><input id="customer" placeholder="会社名 / 部署名" /></div>
-          <div><label for="sales">担当営業</label><select id="sales"><option>営業A</option><option>営業B</option><option>営業C</option></select></div>
-          <div><label for="loanDate">貸出日</label><input id="loanDate" type="date" /></div>
+          <div><label for="customer">貸出先</label><input id="customer" placeholder="会社名 / 担当者名" /></div>
+          <div>
+            <label for="sales">担当営業</label>
+            <select id="sales">
+              <option>竹越</option>
+              <option>森田</option>
+              <option>小野寺</option>
+              <option>北野</option>
+              <option>自由記述</option>
+            </select>
+            <input id="salesCustom" class="hidden" placeholder="担当営業名を入力" style="margin-top:8px;" />
+          </div>
+          <div><label for="loanDate">出荷日</label><input id="loanDate" type="date" /></div>
           <div><label for="dueDate">返却予定日</label><input id="dueDate" type="date" /></div>
         </div>
         <div style="margin-top:12px;"><label for="loanMemo">備考</label><textarea id="loanMemo" placeholder="展示会名、貸出目的、同梱物など"></textarea></div>
         <div class="btn-row">
           <button class="primary" id="saveLoanBtn">貸出登録を保存</button>
           <button class="secondary" id="mockFlamBtn">FLAM登録用メモを表示</button>
-          <button class="ghost" id="openPrintBtn">出荷票PDFを開く想定</button>
+          <button class="ghost" id="openPrintBtn">貸出票プレビューを開く</button>
         </div>
       </div>
     </section>
@@ -224,7 +212,7 @@
             <div class="kvs">
               <div class="kv"><span>貸出先</span><strong id="returnCustomer">-</strong></div>
               <div class="kv"><span>担当営業</span><strong id="returnSales">-</strong></div>
-              <div class="kv"><span>貸出日</span><strong id="returnLoanDate">-</strong></div>
+              <div class="kv"><span>出荷日</span><strong id="returnLoanDate">-</strong></div>
               <div class="kv"><span>返却予定日</span><strong id="returnDueDate">-</strong></div>
             </div>
           </div>
@@ -260,8 +248,9 @@
     <button class="nav-btn" data-nav="history">履歴</button>
   </nav>
 
+  <script src="./lib/jsqr.min.js"></script>
   <script>
-    const STORAGE_KEY = 'demo-device-pwa-prototype-v2';
+    const STORAGE_KEY = 'demo-device-pwa-prototype-v3';
     const screens = ['home', 'loan', 'return', 'history'];
     let state = loadState();
     let currentCondition = '再貸出可';
@@ -275,22 +264,25 @@
       } catch (e) {}
       return {
         history: [
-          { id:'SH-10021', model:'4K-CAM-200', serial:'JP2026-000128', customer:'株式会社サンプル商事', sales:'営業A', loanDate:todayStr(), dueDate:addDaysStr(7), memo:'展示会貸出', status:'貸出中', returnCondition:'' },
-          { id:'SH-10020', model:'XR-Display-55', serial:'SN5520268891', customer:'テスト電子株式会社', sales:'営業B', loanDate:addDaysStr(-10), dueDate:addDaysStr(-3), memo:'デモ訪問', status:'返却済', returnCondition:'再貸出可' }
+          { id:'26081801', model:'BC-GC65M12X4-F', serial:'22080102', customer:'株式会社ヒューブレイン / 柊様', sales:'竹越', loanDate:todayStr(), dueDate:addDaysStr(28), memo:'65M カラー CMOS CXP-12 4Lane Fマウントカメラ', status:'貸出中', returnCondition:'' },
+          { id:'26081702', model:'BC-SCS2M10X1H', serial:'23050060', customer:'テスト電子株式会社', sales:'森田', loanDate:addDaysStr(-10), dueDate:addDaysStr(-3), memo:'デモ訪問', status:'返却済', returnCondition:'再貸出可' }
         ]
       };
     }
     function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); renderHistory(); }
     function todayStr() { const d = new Date(); return d.toISOString().slice(0,10); }
     function addDaysStr(days) { const d = new Date(); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
-
+    function formatDateJP(dateStr) {
+      if (!dateStr) return '-';
+      const [y,m,d] = dateStr.split('-');
+      return `${Number(y)}/${Number(m)}/${Number(d)}`;
+    }
     function setTodayBadge() {
       const jp = new Intl.DateTimeFormat('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit' });
       document.getElementById('todayBadge').textContent = jp.format(new Date());
       document.getElementById('loanDate').value = todayStr();
-      document.getElementById('dueDate').value = addDaysStr(7);
+      document.getElementById('dueDate').value = addDaysStr(30);
     }
-
     function updateStandaloneState() {
       const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       const badge = document.getElementById('standaloneState');
@@ -302,7 +294,6 @@
         badge.textContent = 'ブラウザ起動中';
       }
     }
-
     function showScreen(name) {
       screens.forEach(id => document.getElementById('screen-' + id).classList.toggle('hidden', id !== name));
       document.querySelectorAll('[data-nav]').forEach(btn => {
@@ -311,10 +302,27 @@
       if (name !== 'loan') stopCamera();
     }
 
+    function resolvedSales() {
+      const base = document.getElementById('sales').value;
+      if (base === '自由記述') return document.getElementById('salesCustom').value.trim() || '自由記述';
+      return base;
+    }
+    function toggleSalesCustom() {
+      const custom = document.getElementById('salesCustom');
+      custom.classList.toggle('hidden', document.getElementById('sales').value !== '自由記述');
+      if (!custom.classList.contains('hidden')) custom.focus();
+    }
+
     function parseQRText(text) {
       const normalized = text.trim();
       let model = '';
       let serial = '';
+
+      const underscore = normalized.match(/^\s*([^_\n\r]+)_([^_\n\r]+)\s*$/);
+      if (underscore) {
+        return { model: underscore[1].trim(), serial: underscore[2].trim() };
+      }
+
       const modelPatterns = [/MODEL\s*[=:]\s*([^;|\/\n]+)/i,/型番\s*[=:：]\s*([^;|\/\n]+)/i,/品番\s*[=:：]\s*([^;|\/\n]+)/i];
       const serialPatterns = [/SN\s*[=:]\s*([^;|\/\n]+)/i,/S\/N\s*[=:]\s*([^;|\/\n]+)/i,/SERIAL\s*[=:]\s*([^;|\/\n]+)/i,/シリアル(?:番号)?\s*[=:：]\s*([^;|\/\n]+)/i];
       modelPatterns.forEach(p => { if (!model) { const m = normalized.match(p); if (m) model = m[1].trim(); } });
@@ -322,7 +330,7 @@
       if (!model || !serial) {
         const compact = normalized.replace(/\s+/g, ' ');
         const modelGuess = compact.match(/[A-Z]{1,4}[\-_]?[A-Z0-9]{2,}(?:[\-_][A-Z0-9]{2,})+/);
-        const serialGuess = compact.match(/(?:JP\d{4,}[-_]\d+|SN[\w-]{6,}|[A-Z]\d{6,}|M\d{8,})/i);
+        const serialGuess = compact.match(/(?:JP\d{4,}[-_]\d+|SN[\w-]{6,}|\d{8,}|M\d{8,})/i);
         if (!model && modelGuess) model = modelGuess[0];
         if (!serial && serialGuess) serial = serialGuess[0];
       }
@@ -334,16 +342,16 @@
       const { model, serial } = parseQRText(text);
       if (model) document.getElementById('modelNo').value = model;
       if (serial) document.getElementById('serialNo').value = serial;
-      if (!model && !serial) alert('型番またはシリアル番号を抽出できませんでした。サンプル文字列でお試しください。');
+      if (!model && !serial) alert('型番またはシリアル番号を抽出できませんでした。QR内容を確認してください。');
     }
 
     function loanRecordFromForm() {
       return {
-        id: 'SH-' + String(Date.now()).slice(-5),
+        id: buildSlipNo(),
         model: document.getElementById('modelNo').value.trim(),
         serial: document.getElementById('serialNo').value.trim(),
         customer: document.getElementById('customer').value.trim(),
-        sales: document.getElementById('sales').value,
+        sales: resolvedSales(),
         loanDate: document.getElementById('loanDate').value,
         dueDate: document.getElementById('dueDate').value,
         memo: document.getElementById('loanMemo').value.trim(),
@@ -351,15 +359,21 @@
         returnCondition: ''
       };
     }
-
+    function buildSlipNo() {
+      const d = new Date();
+      const yy = String(d.getFullYear()).slice(-2);
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      const tail = String(Date.now()).slice(-2);
+      return `${yy}${mm}${dd}${tail}`;
+    }
     function validateLoan(rec) {
       if (!rec.model || !rec.serial || !rec.customer || !rec.loanDate || !rec.dueDate) {
-        alert('型番、シリアル番号、貸出先、貸出日、返却予定日は必須です。');
+        alert('型番、シリアル番号、貸出先、出荷日、返却予定日は必須です。');
         return false;
       }
       return true;
     }
-
     function saveLoan() {
       const rec = loanRecordFromForm();
       if (!validateLoan(rec)) return;
@@ -374,16 +388,40 @@
       alert('貸出データを保存しました。');
       showScreen('history');
     }
-
     function buildFlamMemo() {
       const rec = loanRecordFromForm();
-      const msg = ['【FLAM登録用メモ】','倉庫: デモ機','処理: 出荷登録（貸出履歴）','型番: ' + (rec.model || '-'),'シリアル番号: ' + (rec.serial || '-'),'貸出先: ' + (rec.customer || '-'),'担当営業: ' + (rec.sales || '-'),'貸出日: ' + (rec.loanDate || '-'),'返却予定日: ' + (rec.dueDate || '-'),'備考: ' + (rec.memo || '-')].join('\n');
+      const msg = ['【FLAM登録用メモ】','倉庫: デモ機','処理: 出荷登録（貸出履歴）','型番: ' + (rec.model || '-'),'シリアル番号: ' + (rec.serial || '-'),'貸出先: ' + (rec.customer || '-'),'担当営業: ' + (rec.sales || '-'),'出荷日: ' + (rec.loanDate || '-'),'返却予定日: ' + (rec.dueDate || '-'),'備考: ' + (rec.memo || '-')].join('\n');
       alert(msg);
     }
 
+    function buildSlipHtml(rec) {
+      const itemName = rec.memo || 'デモ機';
+      const addressLines = ['〒220-0004 神奈川県横浜市西区北幸2丁目8-4', '横浜西口KNビル9F', 'TEL：045-548-3566 / FAX：045-548-3711', 'Website：https://bopixel.co.jp/'];
+      const notes = [
+        '・貸出機は製品の導入検討目的での評価を前提にお客様へのお貸出しをしております。',
+        '使用感をお試しいただくものであり、保証が必要な事柄やその他の目的での使用はしないでください。',
+        '・貸出機は必ず返却期限をお守りください。また、期間の延長が必要な場合は担当営業までご連絡ください。',
+        '※状況によりご希望に添えない場合もございますので、あらかじめご了承ください。',
+        '・一度に貸出し可能な台数、または貸出し回数を制限させていただくことがございます。',
+        '・万一、貸出機を破損・紛失された場合や貸出期間を経過してもご返却がない場合、当社より商品代金を請求させていただく場合がございますのでお取り扱いには十分ご注意ください。',
+        '・個装箱や梱包袋も含めて、お貸し出し時の状態でご返却ください。',
+        '・ご返却にかかる運送費等はお客様にてご負担いただきますようお願いいたします。'
+      ];
+      return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>貸出票</title><style>
+        body{font-family:"Hiragino Sans","Yu Gothic",sans-serif;background:#fff;color:#111;margin:0;padding:24px} 
+        .sheet{max-width:820px;margin:0 auto;background:#fff;padding:8px 14px 28px}
+        .slip-no{font-size:14px;margin-bottom:18px}.addr{font-size:14px;line-height:1.75}.title{text-align:center;font-weight:700;font-size:28px;letter-spacing:.1em;margin:26px 0 24px}.recipient{font-size:22px;margin:0 0 20px 0}.meta{width:280px;margin-left:auto;border-collapse:collapse;font-size:14px}.meta td{border:1px solid #333;padding:8px 12px}.meta td:first-child{width:120px;background:#fafafa}.items{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px}.items th,.items td{border:1px solid #333;padding:8px 10px;vertical-align:top}.items th{background:#fafafa}.items td{height:34px}.notes-title{font-size:20px;font-weight:700;margin:28px 0 12px}.note{font-size:13px;line-height:1.8;margin:0 0 3px}.print-actions{position:sticky;top:0;background:#f8fafc;border:1px solid #d9e2ec;border-radius:12px;padding:10px 12px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap}.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}.primary{background:#0f766e;color:#fff}.ghost{background:#fff;border:1px solid #d9e2ec;color:#172b4d}@media print {.print-actions{display:none}body{padding:0}.sheet{padding:0 8mm 0}}
+      </style></head><body><div class="sheet"><div class="print-actions"><button class="btn primary" onclick="window.print()">印刷</button><button class="btn ghost" onclick="window.close()">閉じる</button></div><div class="slip-no">No.${escapeHtml(rec.id)}</div><div class="addr">${addressLines.map(x=>`<div>${escapeHtml(x)}</div>`).join('')}<div style="margin-top:8px;">担当：${escapeHtml(rec.sales || '')}</div><div>MAIL：</div></div><div class="title">貸出票</div><div class="recipient">${escapeHtml(rec.customer || '')}</div><table class="meta"><tr><td>出荷日</td><td>${escapeHtml(formatDateJP(rec.loanDate))}</td></tr><tr><td>返却予定日</td><td>${escapeHtml(formatDateJP(rec.dueDate))}</td></tr></table><table class="items"><tr><th style="width:36%">品名</th><th style="width:26%">型番</th><th style="width:8%">数量</th><th style="width:18%">S/N</th><th style="width:12%">備考</th></tr><tr><td>${escapeHtml(itemName)}</td><td>${escapeHtml(rec.model)}</td><td style="text-align:center;">1</td><td>${escapeHtml(rec.serial)}</td><td></td></tr>${Array.from({length:7}).map(()=>'<tr><td></td><td></td><td></td><td></td><td></td></tr>').join('')}</table><div class="notes-title">デモ機のご使用にあたって</div>${notes.map(x=>`<p class="note">${escapeHtml(x)}</p>`).join('')}</div></body></html>`;
+    }
+    function openSlipWindow(rec) {
+      const w = window.open('', '_blank');
+      w.document.write(buildSlipHtml(rec));
+      w.document.close();
+    }
     function openPrintMock() {
-      const html = `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>出荷票PDF想定</title><style>body{font-family:sans-serif;padding:24px;color:#172b4d}.box{border:2px solid #0f766e;border-radius:16px;padding:20px;max-width:640px;margin:auto}h1{margin-top:0}.row{margin:10px 0}</style></head><body><div class="box"><h1>出荷票（試作イメージ）</h1><div class="row">型番: ${escapeHtml(document.getElementById('modelNo').value || '-')}</div><div class="row">シリアル番号: ${escapeHtml(document.getElementById('serialNo').value || '-')}</div><div class="row">貸出先: ${escapeHtml(document.getElementById('customer').value || '-')}</div><div class="row">返却予定日: ${escapeHtml(document.getElementById('dueDate').value || '-')}</div><p>この画面をPDF化またはスマホの共有/印刷から SHARP BP-60C26 へ送る想定です。</p></div></body></html>`;
-      const w = window.open('', '_blank'); w.document.write(html); w.document.close();
+      const rec = loanRecordFromForm();
+      if (!validateLoan(rec)) return;
+      openSlipWindow(rec);
     }
 
     function renderHistory(keyword = '') {
@@ -393,10 +431,9 @@
       if (!rows.length) { box.innerHTML = '<div class="list-item">該当データがありません。</div>'; return; }
       box.innerHTML = rows.map(r => {
         const statusClass = r.status === '貸出中' ? 'warning' : 'ok';
-        return `<div class="list-item"><div class="list-item-top"><div><h3>${escapeHtml(r.model)}</h3><div class="muted tiny">SN: ${escapeHtml(r.serial)} / 伝票ID: ${escapeHtml(r.id)}</div></div><span class="status ${statusClass}">${escapeHtml(r.status)}</span></div><div class="kvs"><div class="kv"><span>貸出先</span><strong>${escapeHtml(r.customer)}</strong></div><div class="kv"><span>担当営業</span><strong>${escapeHtml(r.sales)}</strong></div><div class="kv"><span>貸出日</span><strong>${escapeHtml(r.loanDate)}</strong></div><div class="kv"><span>返却予定日</span><strong>${escapeHtml(r.dueDate)}</strong></div><div class="kv"><span>返却状態</span><strong>${escapeHtml(r.returnCondition || '-')}</strong></div><div class="kv"><span>備考</span><strong>${escapeHtml(r.memo || '-')}</strong></div></div><div class="btn-row"><button class="ghost" onclick="copySerial('${escapeJs(r.serial)}')">返却画面へ</button><button class="secondary" onclick="previewSlip('${escapeJs(r.id)}')">出荷票イメージ</button></div></div>`;
+        return `<div class="list-item"><div class="list-item-top"><div><h3>${escapeHtml(r.model)}</h3><div class="muted tiny">SN: ${escapeHtml(r.serial)} / 伝票No: ${escapeHtml(r.id)}</div></div><span class="status ${statusClass}">${escapeHtml(r.status)}</span></div><div class="kvs"><div class="kv"><span>貸出先</span><strong>${escapeHtml(r.customer)}</strong></div><div class="kv"><span>担当営業</span><strong>${escapeHtml(r.sales)}</strong></div><div class="kv"><span>出荷日</span><strong>${escapeHtml(formatDateJP(r.loanDate))}</strong></div><div class="kv"><span>返却予定日</span><strong>${escapeHtml(formatDateJP(r.dueDate))}</strong></div><div class="kv"><span>返却状態</span><strong>${escapeHtml(r.returnCondition || '-')}</strong></div><div class="kv"><span>備考</span><strong>${escapeHtml(r.memo || '-')}</strong></div></div><div class="btn-row"><button class="ghost" onclick="copySerial('${escapeJs(r.serial)}')">返却画面へ</button><button class="secondary" onclick="previewSlip('${escapeJs(r.id)}')">貸出票プレビュー</button></div></div>`;
       }).join('');
     }
-
     function copySerial(serial) { showScreen('return'); document.getElementById('returnSearch').value = serial; searchReturn(); }
     function searchReturn() {
       const sn = document.getElementById('returnSearch').value.trim();
@@ -407,8 +444,8 @@
       document.getElementById('returnSerial').textContent = 'SN: ' + row.serial;
       document.getElementById('returnCustomer').textContent = row.customer;
       document.getElementById('returnSales').textContent = row.sales;
-      document.getElementById('returnLoanDate').textContent = row.loanDate;
-      document.getElementById('returnDueDate').textContent = row.dueDate;
+      document.getElementById('returnLoanDate').textContent = formatDateJP(row.loanDate);
+      document.getElementById('returnDueDate').textContent = formatDateJP(row.dueDate);
       document.getElementById('returnCustomerLabel').textContent = row.status;
       document.getElementById('returnMemo').value = row.memo || '';
       currentCondition = row.returnCondition || '再貸出可';
@@ -432,8 +469,7 @@
     }
     function previewSlip(id) {
       const row = state.history.find(r => r.id === id); if (!row) return;
-      const html = `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>出荷票</title><style>body{font-family:sans-serif;padding:24px;color:#172b4d}.box{border:2px solid #0f766e;border-radius:16px;padding:20px;max-width:680px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.item{border:1px solid #d9e2ec;border-radius:12px;padding:10px}</style></head><body><div class="box"><h1>出荷票（表示イメージ）</h1><div class="grid"><div class="item">型番<br><strong>${escapeHtml(row.model)}</strong></div><div class="item">シリアル番号<br><strong>${escapeHtml(row.serial)}</strong></div><div class="item">貸出先<br><strong>${escapeHtml(row.customer)}</strong></div><div class="item">担当営業<br><strong>${escapeHtml(row.sales)}</strong></div><div class="item">貸出日<br><strong>${escapeHtml(row.loanDate)}</strong></div><div class="item">返却予定日<br><strong>${escapeHtml(row.dueDate)}</strong></div></div><p>スマホの共有または印刷機能から Sharpdesk Mobile / AirPrint へ渡す想定です。</p></div></body></html>`;
-      const w = window.open('', '_blank'); w.document.write(html); w.document.close();
+      openSlipWindow(row);
     }
     function escapeHtml(str) { return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
     function escapeJs(str) { return String(str).replace(/['\\]/g, '\\$&'); }
@@ -442,27 +478,52 @@
       const video = document.getElementById('cameraPreview');
       if (!navigator.mediaDevices?.getUserMedia) { alert('このブラウザではカメラ機能を利用できません。'); return; }
       try {
-        mediaStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false });
-        video.srcObject = mediaStream; video.style.display = 'block';
-        if ('BarcodeDetector' in window) {
-          const detector = new BarcodeDetector({ formats:['qr_code'] });
-          scanTimer = setInterval(async () => {
-            try {
-              const codes = await detector.detect(video);
-              if (codes.length) { document.getElementById('qrInput').value = codes[0].rawValue || ''; fillParsed(); stopCamera(); }
-            } catch (e) {}
-          }, 800);
-        } else {
-          alert('この端末では簡易カメラ表示のみです。QR文字列の貼付またはサンプルをご利用ください。');
-        }
-      } catch (e) { alert('カメラを起動できませんでした。権限設定をご確認ください。'); }
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' } }, audio:false });
+        video.srcObject = mediaStream;
+        video.style.display = 'block';
+        await video.play();
+        startDecodeLoop(video);
+      } catch (e) {
+        alert('カメラを起動できませんでした。権限設定をご確認ください。');
+      }
+    }
+    function startDecodeLoop(video) {
+      const canvas = document.getElementById('scanCanvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const useNative = 'BarcodeDetector' in window;
+      let detector = null;
+      if (useNative) detector = new BarcodeDetector({ formats:['qr_code'] });
+      if (scanTimer) clearInterval(scanTimer);
+      scanTimer = setInterval(async () => {
+        if (!video.videoWidth || !video.videoHeight) return;
+        try {
+          if (useNative) {
+            const codes = await detector.detect(video);
+            if (codes.length && codes[0].rawValue) {
+              document.getElementById('qrInput').value = codes[0].rawValue;
+              fillParsed();
+              stopCamera();
+              return;
+            }
+          }
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = window.jsQR ? window.jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' }) : null;
+          if (code && code.data) {
+            document.getElementById('qrInput').value = code.data;
+            fillParsed();
+            stopCamera();
+          }
+        } catch (e) {}
+      }, 450);
     }
     function stopCamera() {
       if (scanTimer) clearInterval(scanTimer); scanTimer = null;
       if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
       const video = document.getElementById('cameraPreview'); video.style.display = 'none'; video.srcObject = null;
     }
-
     async function registerSW() {
       if (!('serviceWorker' in navigator)) return;
       try { await navigator.serviceWorker.register('./sw.js'); } catch (e) { console.log('SW registration skipped', e); }
@@ -479,6 +540,7 @@
     document.getElementById('prepareReceiveBtn').addEventListener('click', prepareReceiveMemo);
     document.getElementById('startScanBtn').addEventListener('click', startCamera);
     document.getElementById('stopScanBtn').addEventListener('click', stopCamera);
+    document.getElementById('sales').addEventListener('change', toggleSalesCustom);
     document.querySelectorAll('.sample-qr').forEach(btn => btn.addEventListener('click', () => { document.getElementById('qrInput').value = btn.dataset.sample; fillParsed(); }));
     document.querySelectorAll('#conditionTabs button').forEach(btn => btn.addEventListener('click', () => { currentCondition = btn.dataset.cond; document.querySelectorAll('#conditionTabs button').forEach(x => x.classList.toggle('active', x === btn)); }));
 
@@ -486,6 +548,7 @@
     updateStandaloneState();
     renderHistory();
     registerSW();
+    toggleSalesCustom();
   </script>
 </body>
 </html>
