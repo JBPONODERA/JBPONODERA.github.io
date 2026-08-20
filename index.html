@@ -37,7 +37,7 @@
       -webkit-tap-highlight-color: transparent;
       overscroll-behavior-y: contain;
     }
-    .app { max-width: 1180px; margin: 0 auto; padding: env(safe-area-inset-top) 12px 12px 92px; }
+    .app { max-width: 1220px; margin: 0 auto; padding: env(safe-area-inset-top) 12px 12px 92px; }
     .hero {
       position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px);
       background: rgba(245,247,251,.88); padding: 8px 0 10px;
@@ -46,31 +46,23 @@
       background: linear-gradient(135deg, #0f766e, #0ea5a4 55%, #2563eb);
       color: #fff; border-radius: 22px; padding: 12px 14px; box-shadow: var(--shadow);
     }
-    .hero-top {
-      display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;
-    }
-    .hero-title { min-width: 0; }
+    .hero-top { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+    .hero-title { min-width:0; }
     .badge {
       display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.22);
       padding:5px 10px; border-radius:999px; font-size:11px;
     }
     h1 { margin:0; font-size:20px; line-height:1.2; }
     .subtitle { margin:4px 0 0; font-size:12px; opacity:.95; line-height:1.4; }
-    .quick-grid {
-      display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
-    }
+    .quick-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
     .quick-btn {
       appearance:none; border:none; color:#fff; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18);
       border-radius:14px; padding:10px 10px; text-align:left; font-weight:700; cursor:pointer;
     }
     .quick-btn small { display:block; margin-top:3px; font-size:10px; font-weight:500; opacity:.92; }
     .section { margin-top:14px; }
-    .card {
-      background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px; box-shadow:var(--shadow);
-    }
-    .section-title {
-      display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;
-    }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px; box-shadow:var(--shadow); }
+    .section-title { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
     .section-title h2 { margin:0; font-size:18px; }
     .muted { color:var(--muted); }
     .tiny { font-size:12px; }
@@ -81,16 +73,16 @@
     input, select, textarea {
       width:100%; border:1px solid var(--line); border-radius:14px; padding:12px 13px; font-size:16px; background:#fff; color:var(--text);
     }
-    textarea { min-height:90px; resize:vertical; }
+    textarea { min-height:88px; resize:vertical; }
     .btn-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
-    button.primary, button.secondary, button.ghost, button.warn, button.danger {
-      appearance:none; border:none; border-radius:14px; padding:12px 16px; font-size:14px; font-weight:800; cursor:pointer;
+    button.primary, button.secondary, button.ghost, button.warn, button.danger, label.file-btn {
+      appearance:none; border:none; border-radius:14px; padding:12px 16px; font-size:14px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
     }
     button.primary { background:var(--primary); color:#fff; }
     button.secondary { background:var(--accent); color:#fff; }
     button.warn { background:#f59e0b; color:#fff; }
     button.danger { background:var(--danger); color:#fff; }
-    button.ghost { background:#eef4f7; color:var(--text); border:1px solid var(--line); }
+    button.ghost, label.file-btn { background:#eef4f7; color:var(--text); border:1px solid var(--line); }
     .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
     .chip { background:#f1f5f9; color:var(--text); border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:13px; cursor:pointer; }
     .status { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:700; }
@@ -104,7 +96,7 @@
     .kvs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 14px; font-size:13px; }
     .kv span:first-child { color:var(--muted); display:block; margin-bottom:2px; }
     .bottom-nav {
-      position:fixed; left:50%; transform:translateX(-50%); bottom:10px; width:min(1180px,calc(100% - 20px));
+      position:fixed; left:50%; transform:translateX(-50%); bottom:10px; width:min(1220px,calc(100% - 20px));
       background:rgba(255,255,255,.95); backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:22px;
       box-shadow:var(--shadow); display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden; z-index:20;
     }
@@ -115,7 +107,7 @@
     .camera-wrap { position: relative; margin-top: 10px; }
     .camera { width:100%; aspect-ratio:4/3; background:#0f172a; border-radius:16px; object-fit:cover; display:none; }
     .scan-reticle {
-      position:absolute; inset:12% 12%; border:3px solid rgba(255,255,255,.88); border-radius:18px; display:none; pointer-events:none;
+      position:absolute; inset:12% 12%; border:3px solid rgba(255,255,255,.92); border-radius:18px; display:none; pointer-events:none;
       box-shadow: 0 0 0 9999px rgba(15,23,42,.18) inset;
     }
     .sample-note { border-left:4px solid var(--primary-2); background:#f8fffe; padding:10px 12px; border-radius:10px; font-size:12px; color:var(--muted); }
@@ -127,21 +119,23 @@
     .install-tip { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; border-radius:16px; padding:10px 12px; margin-top:10px; font-size:12px; }
     .install-tip strong { display:block; margin-bottom:4px; }
     .standalone-badge { background:#ecfdf3; color:#166534; border:1px solid #bbf7d0; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:700; }
-    .hint { margin-top: 8px; font-size: 12px; color: var(--muted); }
-    .summary-card {
-      border:1px solid var(--line); border-radius:16px; padding:14px; background:linear-gradient(180deg,#fff 0,#f8fafc 100%);
-    }
+    .summary-card { border:1px solid var(--line); border-radius:16px; padding:14px; background:linear-gradient(180deg,#fff 0,#f8fafc 100%); }
     .summary-card .num { font-size:28px; font-weight:800; margin-top:4px; }
     .desktop-table-wrap { overflow:auto; border:1px solid var(--line); border-radius:16px; }
-    table.desktop-table { width:100%; border-collapse:collapse; min-width:980px; }
+    table.desktop-table { width:100%; border-collapse:collapse; min-width:1120px; }
     .desktop-table th, .desktop-table td { border-bottom:1px solid var(--line); padding:10px 12px; font-size:13px; text-align:left; vertical-align:top; }
     .desktop-table th { position:sticky; top:0; background:#f8fafc; z-index:1; }
     .desktop-only { display:block; }
     .mobile-only { display:none; }
-    .stack-note { margin-top:8px; font-size:12px; color:var(--muted); }
-    @media (max-width: 900px) {
-      .grid-4 { grid-template-columns:repeat(2,1fr); }
-    }
+    .stack-note, .hint { margin-top:8px; font-size:12px; color:var(--muted); }
+    .draft-box { border:1px solid var(--line); border-radius:16px; background:#f8fafc; padding:12px; }
+    .draft-header { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; }
+    .mini-badge { display:inline-flex; align-items:center; gap:6px; background:#e2e8f0; color:#334155; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:700; }
+    .line-card { border:1px solid var(--line); border-radius:14px; background:#fff; padding:10px; }
+    .line-card + .line-card { margin-top:8px; }
+    .line-head { display:flex; justify-content:space-between; gap:8px; align-items:flex-start; margin-bottom:8px; }
+    .line-head strong { display:block; }
+    @media (max-width: 900px) { .grid-4 { grid-template-columns:repeat(2,1fr); } }
     @media (max-width: 720px) {
       .app { padding-left:10px; padding-right:10px; }
       .quick-grid { grid-template-columns:repeat(2,1fr); }
@@ -161,15 +155,15 @@
       <div class="hero-card">
         <div class="hero-top">
           <div class="hero-title">
-            <div class="badge">正式PWA試作版 v3</div>
+            <div class="badge">正式PWA試作版 v4</div>
             <h1>デモ機貸出管理</h1>
-            <p class="subtitle">スマホ入力とPC一覧管理を両立する版です。</p>
+            <p class="subtitle">QR読取・複数明細の貸出票・PC一覧管理に対応した改修版です。</p>
           </div>
           <div class="badge" id="todayBadge">日付</div>
         </div>
         <div class="quick-grid">
-          <button class="quick-btn" data-nav="loan">貸出登録<small>QR読取→貸出入力</small></button>
-          <button class="quick-btn" data-nav="return">返却登録<small>返却処理</small></button>
+          <button class="quick-btn" data-nav="loan">貸出登録<small>QR読取→明細追加</small></button>
+          <button class="quick-btn" data-nav="return">返却登録<small>シリアル単位返却</small></button>
           <button class="quick-btn" data-nav="history">履歴一覧<small>検索・印刷</small></button>
           <button class="quick-btn" data-nav="home">管理概要<small>PC向け一覧</small></button>
         </div>
@@ -186,24 +180,18 @@
           <h2>起動状態</h2>
           <span id="standaloneState" class="standalone-badge">ブラウザ起動中</span>
         </div>
-        <div class="callout">スマホでは貸出登録から、PCではこの画面の一覧から管理する想定です。</div>
+        <div class="callout">スマホでは貸出入力、PCでは一覧管理を中心に使う想定です。1枚の貸出票に複数機種をまとめて登録できます。</div>
       </div>
 
       <div class="section card">
-        <div class="section-title">
-          <h2>サマリー</h2>
-          <span class="status ok">一覧管理</span>
-        </div>
+        <div class="section-title"><h2>サマリー</h2><span class="status ok">一覧管理</span></div>
         <div class="grid-4" id="summaryCards"></div>
       </div>
 
       <div class="section card desktop-only">
-        <div class="section-title">
-          <h2>貸出一覧（PC向け）</h2>
-          <span class="status warning">ブラウザ管理</span>
-        </div>
+        <div class="section-title"><h2>貸出一覧（PC向け）</h2><span class="status warning">ブラウザ管理</span></div>
         <div class="grid-3" style="margin-bottom:12px;">
-          <div><label for="adminKeyword">キーワード</label><input id="adminKeyword" placeholder="型番 / S/N / 貸出先 / 担当営業" /></div>
+          <div><label for="adminKeyword">キーワード</label><input id="adminKeyword" placeholder="型番 / S/N / 貸出先 / 担当営業 / 品名" /></div>
           <div><label for="adminStatus">ステータス</label><select id="adminStatus"><option value="">すべて</option><option value="貸出中">貸出中</option><option value="返却済">返却済</option></select></div>
           <div style="display:flex;align-items:flex-end;"><button class="secondary" id="adminSearchBtn" style="width:100%;">一覧を絞り込む</button></div>
         </div>
@@ -211,7 +199,7 @@
           <table class="desktop-table">
             <thead>
               <tr>
-                <th>No.</th><th>ステータス</th><th>型番</th><th>S/N</th><th>貸出先</th><th>担当営業</th><th>出荷日</th><th>返却予定日</th><th>返却状態</th><th>備考</th>
+                <th>貸出票No.</th><th>ステータス</th><th>品名</th><th>型番</th><th>S/N</th><th>貸出先</th><th>担当営業</th><th>出荷日</th><th>返却予定日</th><th>返却状態</th><th>明細備考</th><th>伝票備考</th>
               </tr>
             </thead>
             <tbody id="adminTableBody"></tbody>
@@ -222,8 +210,8 @@
       <div class="section card mobile-only">
         <div class="section-title"><h2>モバイル向けメモ</h2></div>
         <div class="list">
-          <div class="list-item">下部ナビの「貸出」からすぐ登録できます。</div>
-          <div class="list-item">PCではこのPWAをブラウザで開くと一覧表で管理できます。</div>
+          <div class="list-item">下部ナビの「貸出」から、QR読取→品名初期表示→明細追加の順で使えます。</div>
+          <div class="list-item">PCでは同じURLをブラウザで開くと一覧表で管理できます。</div>
         </div>
       </div>
     </section>
@@ -231,34 +219,8 @@
     <section id="screen-loan" class="section screen hidden">
       <div class="card">
         <div class="section-title"><h2>貸出登録</h2><span class="status ok">STEP 1</span></div>
-        <div class="scan-box">
-          <label for="qrInput">QRコード内容</label>
-          <textarea id="qrInput" placeholder="例: BC-SCS2M10X1H_23050060"></textarea>
-          <div class="camera-wrap">
-            <video id="cameraPreview" class="camera" autoplay playsinline muted></video>
-            <div id="scanReticle" class="scan-reticle"></div>
-          </div>
-          <canvas id="scanCanvas" class="hidden"></canvas>
-          <div class="btn-row">
-            <button class="secondary" id="startScanBtn">カメラ読取開始</button>
-            <button class="ghost" id="stopScanBtn">カメラ停止</button>
-            <button class="primary" id="parseBtn">型番/SNを抽出</button>
-            <label class="ghost" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
-              画像から読取
-              <input id="imageQrInput" type="file" accept="image/*" capture="environment" class="hidden" />
-            </label>
-          </div>
-          <div class="chips">
-            <button class="chip sample-qr" data-sample="BC-SCS2M10X1H_23050060">サンプル1</button>
-            <button class="chip sample-qr" data-sample="MODEL=4K-CAM-200;SN=JP2026-000128;BOX=DEMO;LOT=A01">サンプル2</button>
-            <button class="chip sample-qr" data-sample="型番:XR-Display-55 / S/N:SN5520268891 / 区分:DEMO">サンプル3</button>
-          </div>
-          <div class="sample-note" style="margin-top:10px;">ライブ読取が難しい場合は「画像から読取」でQRを撮影した静止画を使えます。カメラが起動できている場合、HTTPS設定自体は概ね通っています。</div>
-        </div>
 
         <div class="grid-2">
-          <div><label for="modelNo">型番</label><input id="modelNo" placeholder="自動抽出 or 手入力" /></div>
-          <div><label for="serialNo">シリアル番号</label><input id="serialNo" placeholder="自動抽出 or 手入力" /></div>
           <div><label for="customer">貸出先</label><input id="customer" placeholder="会社名 / 担当者名" /></div>
           <div>
             <label for="sales">担当営業</label>
@@ -274,11 +236,53 @@
           <div><label for="loanDate">出荷日</label><input id="loanDate" type="date" /></div>
           <div><label for="dueDate">返却予定日</label><input id="dueDate" type="date" /></div>
         </div>
-        <div style="margin-top:12px;"><label for="loanMemo">品名 / 備考</label><textarea id="loanMemo" placeholder="例：65M カラー CMOS CXP-12 4Lane Fマウントカメラ"></textarea></div>
+        <div style="margin-top:12px;"><label for="commonMemo">伝票備考</label><textarea id="commonMemo" placeholder="展示会名、貸出目的、返却条件など（貸出票全体の備考）"></textarea></div>
+      </div>
+
+      <div class="section card">
+        <div class="section-title"><h2>明細追加</h2><span class="status warning">複数機種対応</span></div>
+        <div class="scan-box">
+          <label for="qrInput">QRコード内容</label>
+          <textarea id="qrInput" placeholder="例: BC-SCS2M10X1H_23050060"></textarea>
+          <div class="camera-wrap">
+            <video id="cameraPreview" class="camera" autoplay playsinline muted></video>
+            <div id="scanReticle" class="scan-reticle"></div>
+          </div>
+          <canvas id="scanCanvas" class="hidden"></canvas>
+          <div class="btn-row">
+            <button class="secondary" id="startScanBtn">カメラ読取開始</button>
+            <button class="ghost" id="stopScanBtn">カメラ停止</button>
+            <button class="primary" id="parseBtn">型番/SNを抽出</button>
+            <label class="file-btn">画像から読取<input id="imageQrInput" type="file" accept="image/*" capture="environment" class="hidden" /></label>
+          </div>
+          <div class="chips">
+            <button class="chip sample-qr" data-sample="BC-SCS2M10X1H_23050060">実サンプル形式</button>
+            <button class="chip sample-qr" data-sample="MODEL=4K-CAM-200;SN=JP2026-000128;BOX=DEMO;LOT=A01">サンプル2</button>
+            <button class="chip sample-qr" data-sample="型番:XR-Display-55 / S/N:SN5520268891 / 区分:DEMO">サンプル3</button>
+          </div>
+          <div class="sample-note" style="margin-top:10px;">実サンプル画像は OpenCV で「BC-SCS2M10X1H_23050060」と読み取り確認済みです。HTTPSよりも、QRサイズ・反射・ピントの影響が大きいと考えられます。</div>
+        </div>
+
+        <div class="grid-2">
+          <div><label for="modelNo">型番</label><input id="modelNo" placeholder="自動抽出 or 手入力" /></div>
+          <div><label for="serialNo">シリアル番号</label><input id="serialNo" placeholder="自動抽出 or 手入力" /></div>
+          <div><label for="productName">品名</label><input id="productName" placeholder="型番から初期表示、後から修正可能" /></div>
+          <div><label for="itemNote">明細備考</label><input id="itemNote" placeholder="付属品、状態など明細単位の備考" /></div>
+        </div>
+        <div class="hint">品名は型番ルールから自動推定されます。必要に応じて自由に修正してください。</div>
         <div class="btn-row">
-          <button class="primary" id="saveLoanBtn">貸出登録を保存</button>
-          <button class="secondary" id="mockFlamBtn">FLAM登録用メモを表示</button>
-          <button class="ghost" id="openPrintBtn">貸出票プレビューを開く</button>
+          <button class="primary" id="addLineBtn">この明細を貸出票に追加</button>
+          <button class="ghost" id="clearLineBtn">明細入力をクリア</button>
+        </div>
+      </div>
+
+      <div class="section card">
+        <div class="draft-header"><h2 style="margin:0;font-size:18px;">現在の貸出票</h2><span class="mini-badge" id="draftCountBadge">0明細</span></div>
+        <div id="draftLines" class="draft-box"></div>
+        <div class="btn-row">
+          <button class="secondary" id="openPrintBtn">貸出票プレビューを開く</button>
+          <button class="ghost" id="mockFlamBtn">FLAM登録用メモを表示</button>
+          <button class="primary" id="saveLoanBtn">貸出票として保存</button>
         </div>
       </div>
     </section>
@@ -294,6 +298,8 @@
           <div class="list-item" style="background:#f8fafc;">
             <div class="list-item-top"><div><h3 id="returnModel">-</h3><div class="muted tiny" id="returnSerial">-</div></div><span class="status ok" id="returnCustomerLabel">貸出中</span></div>
             <div class="kvs">
+              <div class="kv"><span>貸出票No.</span><strong id="returnSlipNo">-</strong></div>
+              <div class="kv"><span>品名</span><strong id="returnProductName">-</strong></div>
               <div class="kv"><span>貸出先</span><strong id="returnCustomer">-</strong></div>
               <div class="kv"><span>担当営業</span><strong id="returnSales">-</strong></div>
               <div class="kv"><span>出荷日</span><strong id="returnLoanDate">-</strong></div>
@@ -317,7 +323,7 @@
       <div class="card">
         <div class="section-title"><h2>履歴検索 / 印刷</h2><span class="status ok">STEP 3</span></div>
         <div class="grid-2">
-          <div><label for="historyKeyword">キーワード検索</label><input id="historyKeyword" placeholder="型番 / シリアル / 貸出先" /></div>
+          <div><label for="historyKeyword">キーワード検索</label><input id="historyKeyword" placeholder="型番 / シリアル / 貸出先 / 品名" /></div>
           <div style="display:flex;align-items:flex-end;"><button class="secondary" id="historySearchBtn" style="width:100%;">検索</button></div>
         </div>
         <div class="list" id="historyList" style="margin-top:14px;"></div>
@@ -335,24 +341,59 @@
 
   <script src="./lib/jsqr.min.js"></script>
   <script>
-    const STORAGE_KEY = 'demo-device-pwa-prototype-v4';
+    const STORAGE_KEY = 'demo-device-pwa-prototype-v5';
     const screens = ['home', 'loan', 'return', 'history'];
+    const SALES_EMAILS = {
+      '竹越': 'takegoshi@bopixel.co.jp',
+      '森田': 'morita@bopixel.co.jp',
+      '小野寺': 'onodera@bopixel.co.jp',
+      '北野': 'kitano@bopixel.co.jp'
+    };
+    const MODEL_EXACT_NAMES = {
+      'BC-GM65M6X4H-F': 'エリアカメラ、mono、65MP、CXP6x4Lane、F-Mount',
+      'BC-SC5M10X1': 'エリアカメラ、color、5MP、CXP10x1Lane、C-Mount',
+      'BC-SMS05M10X1H': 'エリアカメラ、mono、0.5MP、CXP10x1、High-Speed、C-Mount',
+      'BC-SMS20M10X1N': 'エリアカメラ、mono、20MP、CXP10x1Lane、Normal-Speed、C-Mount',
+      'BC-SM3MCL': 'エリアカメラ、mono、3MP、CameraLink、C-Mount',
+      'BL-GM9KTD12X4-M58': 'ラインカメラ、mono、9kTDI、CXP12x4、M58-Mount'
+    };
+
     let state = loadState();
     let currentCondition = '再貸出可';
     let mediaStream = null;
     let scanTimer = null;
+    let currentReturnRef = null;
+    let draftItems = [];
 
+    function defaultState() {
+      return {
+        slips: [
+          {
+            slipNo: '26082001', customer: '株式会社ヒューブレイン / 柊様', sales: '竹越', loanDate: todayStr(), dueDate: addDaysStr(30), commonMemo: 'デモ評価貸出',
+            items: [
+              { productName: '65M カラー CMOS CXP-12 4Lane Fマウントカメラ', model: 'BC-GC65M12X4-F', serial: '22080102', itemNote: '付属ACアダプタ同梱', status: '貸出中', returnCondition: '', returnMemo: '' },
+              { productName: inferProductName('BC-SCS2M10X1H'), model: 'BC-SCS2M10X1H', serial: '23050060', itemNote: '実サンプルQR', status: '貸出中', returnCondition: '', returnMemo: '' }
+            ]
+          },
+          {
+            slipNo: '26081002', customer: 'テスト電子株式会社', sales: '森田', loanDate: addDaysStr(-10), dueDate: addDaysStr(-3), commonMemo: 'デモ訪問',
+            items: [
+              { productName: inferProductName('BC-SM3MCL'), model: 'BC-SM3MCL', serial: 'SN5520268891', itemNote: '', status: '返却済', returnCondition: '再貸出可', returnMemo: '問題なし' }
+            ]
+          }
+        ]
+      };
+    }
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
-      } catch (e) {}
-      return {
-        history: [
-          { id:'26081801', model:'BC-GC65M12X4-F', serial:'22080102', customer:'株式会社ヒューブレイン / 柊様', sales:'竹越', loanDate:todayStr(), dueDate:addDaysStr(28), memo:'65M カラー CMOS CXP-12 4Lane Fマウントカメラ', status:'貸出中', returnCondition:'' },
-          { id:'26081702', model:'BC-SCS2M10X1H', serial:'23050060', customer:'テスト電子株式会社', sales:'森田', loanDate:addDaysStr(-10), dueDate:addDaysStr(-3), memo:'デモ訪問', status:'返却済', returnCondition:'再貸出可' }
-        ]
-      };
+        if (!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        if (!parsed.slips) return defaultState();
+        return parsed;
+      } catch (e) {
+        return defaultState();
+      }
     }
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -386,9 +427,7 @@
     }
     function showScreen(name) {
       screens.forEach(id => document.getElementById('screen-' + id).classList.toggle('hidden', id !== name));
-      document.querySelectorAll('[data-nav]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.nav === name);
-      });
+      document.querySelectorAll('[data-nav]').forEach(btn => btn.classList.toggle('active', btn.dataset.nav === name));
       if (name !== 'loan') stopCamera();
     }
     function initialScreen() {
@@ -396,7 +435,6 @@
       const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       return (mobile || standalone) ? 'loan' : 'home';
     }
-
     function resolvedSales() {
       const base = document.getElementById('sales').value;
       if (base === '自由記述') return document.getElementById('salesCustom').value.trim() || '自由記述';
@@ -406,15 +444,69 @@
       const custom = document.getElementById('salesCustom');
       custom.classList.toggle('hidden', document.getElementById('sales').value !== '自由記述');
     }
+    function getSalesEmail(sales) {
+      return SALES_EMAILS[sales] || '';
+    }
+
+    function inferProductName(model) {
+      const code = String(model || '').trim();
+      if (!code) return '';
+      if (MODEL_EXACT_NAMES[code]) return MODEL_EXACT_NAMES[code];
+      const parts = [];
+      if (code.startsWith('BC-')) parts.push('エリアカメラ');
+      else if (code.startsWith('BL-')) parts.push('ラインカメラ');
+
+      if (/(^|-)GC|(^|-)SC/.test(code)) parts.push('color');
+      else if (/(^|-)GM|(^|-)SM/.test(code)) parts.push('mono');
+
+      if (/\d+KTD/i.test(code)) {
+        const m = code.match(/(\d+)KTD/i);
+        if (m) parts.push(`${m[1]}kTDI`);
+      } else {
+        const m = code.match(/(\d{1,2})M/i);
+        if (m) {
+          const raw = m[1];
+          const mp = raw === '05' ? '0.5' : String(Number(raw));
+          parts.push(`${mp}MP`);
+        }
+      }
+
+      if (/CL$/i.test(code) || /MCL/i.test(code)) parts.push('CameraLink');
+      else {
+        const ifc = code.match(/(\d{1,2})X(\d)/i);
+        if (ifc) parts.push(`CXP${Number(ifc[1])}x${Number(ifc[2])}Lane`);
+      }
+
+      if (/H(?:-|$)/i.test(code)) parts.push('High-Speed');
+      if (/N(?:-|$)/i.test(code)) parts.push('Normal-Speed');
+
+      if (/M58/i.test(code)) parts.push('M58-Mount');
+      else if (/-F$/i.test(code)) parts.push('F-Mount');
+      else parts.push('C-Mount');
+
+      return parts.join('、') || code;
+    }
+    function updateProductNameFromModel(force = false) {
+      const input = document.getElementById('productName');
+      if (!force && input.dataset.manual === '1') return;
+      input.value = inferProductName(document.getElementById('modelNo').value.trim());
+      input.dataset.manual = '0';
+    }
+    function clearLineInputs() {
+      document.getElementById('qrInput').value = '';
+      document.getElementById('modelNo').value = '';
+      document.getElementById('serialNo').value = '';
+      document.getElementById('productName').value = '';
+      document.getElementById('productName').dataset.manual = '0';
+      document.getElementById('itemNote').value = '';
+    }
 
     function parseQRText(text) {
       const normalized = text.trim();
       let model = '';
       let serial = '';
-
       const underscore = normalized.match(/^\s*([^_\n\r]+)_([^_\n\r]+)\s*$/);
       if (underscore) return { model: underscore[1].trim(), serial: underscore[2].trim() };
-
       const modelPatterns = [/MODEL\s*[=:]\s*([^;|\/\n]+)/i,/型番\s*[=:：]\s*([^;|\/\n]+)/i,/品番\s*[=:：]\s*([^;|\/\n]+)/i];
       const serialPatterns = [/SN\s*[=:]\s*([^;|\/\n]+)/i,/S\/N\s*[=:]\s*([^;|\/\n]+)/i,/SERIAL\s*[=:]\s*([^;|\/\n]+)/i,/シリアル(?:番号)?\s*[=:：]\s*([^;|\/\n]+)/i];
       modelPatterns.forEach(p => { if (!model) { const m = normalized.match(p); if (m) model = m[1].trim(); } });
@@ -433,61 +525,142 @@
       const { model, serial } = parseQRText(text);
       if (model) document.getElementById('modelNo').value = model;
       if (serial) document.getElementById('serialNo').value = serial;
+      updateProductNameFromModel(true);
       if (!model && !serial) alert('型番またはシリアル番号を抽出できませんでした。QR内容を確認してください。');
     }
 
-    function loanRecordFromForm() {
+    function currentLineFromForm() {
       return {
-        id: buildSlipNo(),
+        productName: document.getElementById('productName').value.trim() || inferProductName(document.getElementById('modelNo').value.trim()),
         model: document.getElementById('modelNo').value.trim(),
         serial: document.getElementById('serialNo').value.trim(),
-        customer: document.getElementById('customer').value.trim(),
-        sales: resolvedSales(),
-        loanDate: document.getElementById('loanDate').value,
-        dueDate: document.getElementById('dueDate').value,
-        memo: document.getElementById('loanMemo').value.trim(),
+        itemNote: document.getElementById('itemNote').value.trim(),
         status: '貸出中',
-        returnCondition: ''
+        returnCondition: '',
+        returnMemo: ''
       };
     }
-    function buildSlipNo() {
-      const d = new Date();
-      const yy = String(d.getFullYear()).slice(-2);
-      const mm = String(d.getMonth()+1).padStart(2,'0');
-      const dd = String(d.getDate()).padStart(2,'0');
-      const tail = String(Date.now()).slice(-2);
-      return `${yy}${mm}${dd}${tail}`;
-    }
-    function validateLoan(rec) {
-      if (!rec.model || !rec.serial || !rec.customer || !rec.loanDate || !rec.dueDate) {
-        alert('型番、シリアル番号、貸出先、出荷日、返却予定日は必須です。');
+    function validateLine(line) {
+      if (!line.model || !line.serial) {
+        alert('型番とシリアル番号は必須です。');
         return false;
       }
       return true;
     }
-    function saveLoan() {
-      const rec = loanRecordFromForm();
-      if (!validateLoan(rec)) return;
-      const existingIdx = state.history.findIndex(x => x.serial === rec.serial && x.status === '貸出中');
-      if (existingIdx >= 0) {
-        if (!confirm('同じシリアル番号の貸出中データがあります。上書きしますか？')) return;
-        state.history[existingIdx] = { ...state.history[existingIdx], ...rec };
+    function addDraftLine() {
+      const line = currentLineFromForm();
+      if (!validateLine(line)) return;
+      const idx = draftItems.findIndex(x => x.serial === line.serial);
+      if (idx >= 0) {
+        draftItems[idx] = line;
       } else {
-        state.history.unshift(rec);
+        draftItems.push(line);
       }
+      renderDraftItems();
+      clearLineInputs();
+      document.getElementById('modelNo').focus();
+    }
+    function removeDraftLine(serial) {
+      draftItems = draftItems.filter(x => x.serial !== serial);
+      renderDraftItems();
+    }
+    function renderDraftItems() {
+      const box = document.getElementById('draftLines');
+      document.getElementById('draftCountBadge').textContent = `${draftItems.length}明細`;
+      if (!draftItems.length) {
+        box.innerHTML = '<div class="muted tiny">まだ明細がありません。QR読取または手入力後、「この明細を貸出票に追加」を押してください。</div>';
+        return;
+      }
+      box.innerHTML = draftItems.map((item, i) => `
+        <div class="line-card">
+          <div class="line-head">
+            <div>
+              <strong>${escapeHtml(item.productName)}</strong>
+              <div class="muted tiny">${i + 1}行目 / 型番: ${escapeHtml(item.model)} / S/N: ${escapeHtml(item.serial)}</div>
+            </div>
+            <button class="danger" onclick="removeDraftLine('${escapeJs(item.serial)}')">削除</button>
+          </div>
+          <div class="kvs">
+            <div class="kv"><span>品名</span><strong>${escapeHtml(item.productName)}</strong></div>
+            <div class="kv"><span>明細備考</span><strong>${escapeHtml(item.itemNote || '-')}</strong></div>
+          </div>
+        </div>`).join('');
+    }
+
+    function buildSlipNo() {
+      const d = new Date();
+      const yy = String(d.getFullYear()).slice(-2);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const tail = String(Date.now()).slice(-2);
+      return `${yy}${mm}${dd}${tail}`;
+    }
+    function currentSlipFromForm() {
+      return {
+        slipNo: buildSlipNo(),
+        customer: document.getElementById('customer').value.trim(),
+        sales: resolvedSales(),
+        loanDate: document.getElementById('loanDate').value,
+        dueDate: document.getElementById('dueDate').value,
+        commonMemo: document.getElementById('commonMemo').value.trim(),
+        items: draftItems.map(x => ({ ...x }))
+      };
+    }
+    function validateSlip(slip) {
+      if (!slip.customer || !slip.sales || !slip.loanDate || !slip.dueDate) {
+        alert('貸出先、担当営業、出荷日、返却予定日は必須です。');
+        return false;
+      }
+      if (!slip.items.length) {
+        alert('貸出票に1件以上の明細を追加してください。');
+        return false;
+      }
+      return true;
+    }
+    function saveLoanSlip() {
+      const slip = currentSlipFromForm();
+      if (!validateSlip(slip)) return;
+      state.slips.unshift(slip);
       saveState();
-      alert('貸出データを保存しました。');
+      draftItems = [];
+      renderDraftItems();
+      clearLineInputs();
+      alert('貸出票を保存しました。');
       showScreen('history');
     }
     function buildFlamMemo() {
-      const rec = loanRecordFromForm();
-      const msg = ['【FLAM登録用メモ】','倉庫: デモ機','処理: 出荷登録（貸出履歴）','型番: ' + (rec.model || '-'),'シリアル番号: ' + (rec.serial || '-'),'貸出先: ' + (rec.customer || '-'),'担当営業: ' + (rec.sales || '-'),'出荷日: ' + (rec.loanDate || '-'),'返却予定日: ' + (rec.dueDate || '-'),'備考: ' + (rec.memo || '-')].join('\n');
-      alert(msg);
+      const slip = currentSlipFromForm();
+      if (!validateSlip(slip)) return;
+      const lines = [
+        '【FLAM登録用メモ】',
+        '倉庫: デモ機',
+        '処理: 出荷登録（貸出履歴）',
+        `貸出票No: ${slip.slipNo}`,
+        `貸出先: ${slip.customer}`,
+        `担当営業: ${slip.sales}`,
+        `出荷日: ${slip.loanDate}`,
+        `返却予定日: ${slip.dueDate}`,
+        `伝票備考: ${slip.commonMemo || '-'}`,
+        '--- 明細 ---'
+      ];
+      slip.items.forEach((item, i) => {
+        lines.push(`${i + 1}. 品名: ${item.productName}`);
+        lines.push(`   型番: ${item.model}`);
+        lines.push(`   S/N: ${item.serial}`);
+        lines.push(`   明細備考: ${item.itemNote || '-'}`);
+      });
+      alert(lines.join('\n'));
     }
 
-    function buildSlipHtml(rec) {
-      const itemName = rec.memo || 'デモ機';
-      const addressLines = ['〒220-0004 神奈川県横浜市西区北幸2丁目8-4', '横浜西口KNビル9F', 'TEL：045-548-3566 / FAX：045-548-3711', 'Website：https://bopixel.co.jp/'];
+    function buildSlipHtml(slip) {
+      const email = getSalesEmail(slip.sales);
+      const addressLines = [
+        'ジャパンボーピクセル株式会社',
+        '〒220-0004 神奈川県横浜市西区北幸2丁目8-4',
+        '横浜西口KNビル9F',
+        'TEL：045-548-3566 / FAX：045-548-3711',
+        'Website：https://bopixel.co.jp/'
+      ];
       const notes = [
         '・貸出機は製品の導入検討目的での評価を前提にお客様へのお貸出しをしております。',
         '使用感をお試しいただくものであり、保証が必要な事柄やその他の目的での使用はしないでください。',
@@ -498,111 +671,142 @@
         '・個装箱や梱包袋も含めて、お貸し出し時の状態でご返却ください。',
         '・ご返却にかかる運送費等はお客様にてご負担いただきますようお願いいたします。'
       ];
+      const rows = slip.items.map(item => `
+        <tr>
+          <td>${escapeHtml(item.productName || '')}</td>
+          <td>${escapeHtml(item.model || '')}</td>
+          <td style="text-align:center;">1</td>
+          <td>${escapeHtml(item.serial || '')}</td>
+          <td>${escapeHtml(item.itemNote || '')}</td>
+        </tr>`).join('');
+      const emptyRows = Array.from({ length: Math.max(0, 5 - slip.items.length) }).map(() => '<tr><td></td><td></td><td></td><td></td><td></td></tr>').join('');
       return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>貸出票</title><style>
         @page { size: A4 portrait; margin: 7mm; }
         body{font-family:"Hiragino Sans","Yu Gothic",sans-serif;background:#fff;color:#111;margin:0;padding:0;font-size:11px;line-height:1.35}
-        .sheet{width:196mm; max-width:196mm; margin:0 auto; padding:0}
-        .slip-no{font-size:11px;margin-bottom:8px}
-        .addr{font-size:11px;line-height:1.45}
-        .title{text-align:center;font-weight:700;font-size:20px;letter-spacing:.1em;margin:12px 0 12px}
-        .recipient{font-size:17px;margin:0 0 10px 0}
-        .meta{width:250px;margin-left:auto;border-collapse:collapse;font-size:11px}
-        .meta td{border:1px solid #333;padding:5px 8px}.meta td:first-child{width:110px;background:#fafafa}
-        .items{width:100%;border-collapse:collapse;margin-top:10px;font-size:10px}
-        .items th,.items td{border:1px solid #333;padding:4px 6px;vertical-align:top}.items th{background:#fafafa}.items td{height:22px}
-        .notes-title{font-size:16px;font-weight:700;margin:14px 0 8px}
-        .note{font-size:10px;line-height:1.45;margin:0 0 2px}
+        .sheet{width:196mm;max-width:196mm;margin:0 auto;padding:0}
+        .slip-no{font-size:11px;margin-bottom:8px}.head{display:flex;gap:12px;align-items:flex-start}.left{flex:1}.right{width:250px}
+        .addr{font-size:10.8px;line-height:1.45}.title{text-align:center;font-weight:700;font-size:20px;letter-spacing:.1em;margin:10px 0 12px}.recipient{font-size:17px;margin:0 0 10px 0}
+        .meta{width:100%;border-collapse:collapse;font-size:11px}.meta td{border:1px solid #333;padding:5px 8px}.meta td:first-child{width:110px;background:#fafafa}
+        .items{width:100%;border-collapse:collapse;margin-top:10px;font-size:10px}.items th,.items td{border:1px solid #333;padding:4px 6px;vertical-align:top}.items th{background:#fafafa}.items td{height:19px}
+        .notes-title{font-size:15px;font-weight:700;margin:12px 0 6px}.note{font-size:9.4px;line-height:1.42;margin:0 0 2px}.memo{font-size:10px;margin-top:6px}
         .print-actions{position:sticky;top:0;background:#f8fafc;border:1px solid #d9e2ec;border-radius:10px;padding:8px 10px;margin:0 0 10px;display:flex;gap:8px;flex-wrap:wrap}
         .btn{border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}.primary{background:#0f766e;color:#fff}.ghost{background:#fff;border:1px solid #d9e2ec;color:#172b4d}
-        @media print {.print-actions{display:none}.sheet{width:auto;max-width:none}.note{font-size:9.5px}.recipient{font-size:16px}.title{font-size:18px;margin:10px 0}.items td{height:20px}}
-      </style></head><body><div class="sheet"><div class="print-actions"><button class="btn primary" onclick="window.print()">印刷</button><button class="btn ghost" onclick="window.close()">閉じる</button></div><div class="slip-no">No.${escapeHtml(rec.id)}</div><div class="addr">${addressLines.map(x=>`<div>${escapeHtml(x)}</div>`).join('')}<div style="margin-top:6px;">担当：${escapeHtml(rec.sales || '')}</div><div>MAIL：</div></div><div class="title">貸出票</div><div class="recipient">${escapeHtml(rec.customer || '')}</div><table class="meta"><tr><td>出荷日</td><td>${escapeHtml(formatDateJP(rec.loanDate))}</td></tr><tr><td>返却予定日</td><td>${escapeHtml(formatDateJP(rec.dueDate))}</td></tr></table><table class="items"><tr><th style="width:37%">品名</th><th style="width:25%">型番</th><th style="width:8%">数量</th><th style="width:18%">S/N</th><th style="width:12%">備考</th></tr><tr><td>${escapeHtml(itemName)}</td><td>${escapeHtml(rec.model)}</td><td style="text-align:center;">1</td><td>${escapeHtml(rec.serial)}</td><td></td></tr>${Array.from({length:5}).map(()=>'<tr><td></td><td></td><td></td><td></td><td></td></tr>').join('')}</table><div class="notes-title">デモ機のご使用にあたって</div>${notes.map(x=>`<p class="note">${escapeHtml(x)}</p>`).join('')}</div></body></html>`;
+        @media print {.print-actions{display:none}.sheet{width:auto;max-width:none}.title{font-size:18px;margin:8px 0 10px}.recipient{font-size:16px}.items td{height:18px}.note{font-size:9px}}
+      </style></head><body><div class="sheet"><div class="print-actions"><button class="btn primary" onclick="window.print()">印刷</button><button class="btn ghost" onclick="window.close()">閉じる</button></div><div class="slip-no">No.${escapeHtml(slip.slipNo)}</div><div class="head"><div class="left addr">${addressLines.map(x => `<div>${escapeHtml(x)}</div>`).join('')}<div style="margin-top:6px;">担当：${escapeHtml(slip.sales || '')}</div><div>MAIL：${escapeHtml(email)}</div></div><div class="right"><table class="meta"><tr><td>出荷日</td><td>${escapeHtml(formatDateJP(slip.loanDate))}</td></tr><tr><td>返却予定日</td><td>${escapeHtml(formatDateJP(slip.dueDate))}</td></tr></table></div></div><div class="title">貸出票</div><div class="recipient">${escapeHtml(slip.customer || '')}</div><table class="items"><tr><th style="width:38%">品名</th><th style="width:24%">型番</th><th style="width:8%">数量</th><th style="width:18%">S/N</th><th style="width:12%">備考</th></tr>${rows}${emptyRows}</table>${slip.commonMemo ? `<div class="memo">伝票備考：${escapeHtml(slip.commonMemo)}</div>` : ''}<div class="notes-title">デモ機のご使用にあたって</div>${notes.map(x => `<p class="note">${escapeHtml(x)}</p>`).join('')}</div></body></html>`;
     }
-    function openSlipWindow(rec) {
+    function openSlipWindow(slip) {
       const w = window.open('', '_blank');
-      w.document.write(buildSlipHtml(rec));
+      w.document.write(buildSlipHtml(slip));
       w.document.close();
     }
     function openPrintMock() {
-      const rec = loanRecordFromForm();
-      if (!validateLoan(rec)) return;
-      openSlipWindow(rec);
+      const slip = currentSlipFromForm();
+      if (!validateSlip(slip)) return;
+      openSlipWindow(slip);
     }
 
-    function renderHistory(keyword = '') {
-      const box = document.getElementById('historyList');
-      const q = keyword.trim().toLowerCase();
-      const rows = filteredRows(q, '');
-      if (!rows.length) { box.innerHTML = '<div class="list-item">該当データがありません。</div>'; return; }
-      box.innerHTML = rows.map(r => {
-        const statusClass = r.status === '貸出中' ? 'warning' : 'ok';
-        return `<div class="list-item"><div class="list-item-top"><div><h3>${escapeHtml(r.model)}</h3><div class="muted tiny">SN: ${escapeHtml(r.serial)} / 伝票No: ${escapeHtml(r.id)}</div></div><span class="status ${statusClass}">${escapeHtml(r.status)}</span></div><div class="kvs"><div class="kv"><span>貸出先</span><strong>${escapeHtml(r.customer)}</strong></div><div class="kv"><span>担当営業</span><strong>${escapeHtml(r.sales)}</strong></div><div class="kv"><span>出荷日</span><strong>${escapeHtml(formatDateJP(r.loanDate))}</strong></div><div class="kv"><span>返却予定日</span><strong>${escapeHtml(formatDateJP(r.dueDate))}</strong></div><div class="kv"><span>返却状態</span><strong>${escapeHtml(r.returnCondition || '-')}</strong></div><div class="kv"><span>備考</span><strong>${escapeHtml(r.memo || '-')}</strong></div></div><div class="btn-row"><button class="ghost" onclick="copySerial('${escapeJs(r.serial)}')">返却画面へ</button><button class="secondary" onclick="previewSlip('${escapeJs(r.id)}')">貸出票プレビュー</button></div></div>`;
-      }).join('');
-    }
-    function filteredRows(keyword, status) {
-      return state.history.filter(r => {
-        const hitKeyword = !keyword || [r.model, r.serial, r.customer, r.sales, r.status, r.memo].join(' ').toLowerCase().includes(keyword.toLowerCase());
+    function flattenRows(keyword = '', status = '') {
+      const rows = [];
+      state.slips.forEach((slip, slipIndex) => {
+        slip.items.forEach((item, itemIndex) => {
+          rows.push({
+            slipIndex, itemIndex,
+            slipNo: slip.slipNo, customer: slip.customer, sales: slip.sales, loanDate: slip.loanDate, dueDate: slip.dueDate, commonMemo: slip.commonMemo,
+            productName: item.productName, model: item.model, serial: item.serial, itemNote: item.itemNote,
+            status: item.status, returnCondition: item.returnCondition, returnMemo: item.returnMemo
+          });
+        });
+      });
+      return rows.filter(r => {
+        const hitKeyword = !keyword || [r.slipNo, r.customer, r.sales, r.productName, r.model, r.serial, r.status, r.itemNote, r.commonMemo].join(' ').toLowerCase().includes(keyword.toLowerCase());
         const hitStatus = !status || r.status === status;
         return hitKeyword && hitStatus;
       });
     }
     function renderSummary() {
       const today = todayStr();
-      const active = state.history.filter(r => r.status === '貸出中');
+      const rows = flattenRows();
+      const active = rows.filter(r => r.status === '貸出中');
       const overdue = active.filter(r => r.dueDate < today);
-      const returned = state.history.filter(r => r.status === '返却済');
-      const cards = [
-        ['総件数', state.history.length, '登録済み履歴'],
-        ['貸出中', active.length, '現在の貸出中'],
-        ['返却済', returned.length, '返却完了'],
-        ['返却遅延', overdue.length, '返却予定日超過']
-      ];
+      const returned = rows.filter(r => r.status === '返却済');
+      const cards = [['総明細数', rows.length, '登録済み明細'], ['貸出中', active.length, '現在の貸出中'], ['返却済', returned.length, '返却完了'], ['返却遅延', overdue.length, '返却予定日超過']];
       document.getElementById('summaryCards').innerHTML = cards.map(([title,num,sub]) => `<div class="summary-card"><div class="muted tiny">${escapeHtml(title)}</div><div class="num">${num}</div><div class="muted tiny">${escapeHtml(sub)}</div></div>`).join('');
     }
     function renderAdminTable() {
       const q = document.getElementById('adminKeyword') ? document.getElementById('adminKeyword').value.trim() : '';
       const status = document.getElementById('adminStatus') ? document.getElementById('adminStatus').value : '';
-      const rows = filteredRows(q, status);
+      const rows = flattenRows(q, status);
       const body = document.getElementById('adminTableBody');
       if (!body) return;
-      body.innerHTML = rows.map(r => `<tr><td>${escapeHtml(r.id)}</td><td>${escapeHtml(r.status)}</td><td>${escapeHtml(r.model)}</td><td>${escapeHtml(r.serial)}</td><td>${escapeHtml(r.customer)}</td><td>${escapeHtml(r.sales)}</td><td>${escapeHtml(formatDateJP(r.loanDate))}</td><td>${escapeHtml(formatDateJP(r.dueDate))}</td><td>${escapeHtml(r.returnCondition || '-')}</td><td>${escapeHtml(r.memo || '-')}</td></tr>`).join('');
-      if (!rows.length) body.innerHTML = '<tr><td colspan="10">該当データがありません。</td></tr>';
+      body.innerHTML = rows.map(r => `<tr><td>${escapeHtml(r.slipNo)}</td><td>${escapeHtml(r.status)}</td><td>${escapeHtml(r.productName || '-')}</td><td>${escapeHtml(r.model)}</td><td>${escapeHtml(r.serial)}</td><td>${escapeHtml(r.customer)}</td><td>${escapeHtml(r.sales)}</td><td>${escapeHtml(formatDateJP(r.loanDate))}</td><td>${escapeHtml(formatDateJP(r.dueDate))}</td><td>${escapeHtml(r.returnCondition || '-')}</td><td>${escapeHtml(r.itemNote || '-')}</td><td>${escapeHtml(r.commonMemo || '-')}</td></tr>`).join('');
+      if (!rows.length) body.innerHTML = '<tr><td colspan="12">該当データがありません。</td></tr>';
     }
-    function copySerial(serial) { showScreen('return'); document.getElementById('returnSearch').value = serial; searchReturn(); }
+    function renderHistory(keyword = '') {
+      const box = document.getElementById('historyList');
+      const rows = flattenRows(keyword, '');
+      if (!rows.length) { box.innerHTML = '<div class="list-item">該当データがありません。</div>'; return; }
+      box.innerHTML = rows.map(r => {
+        const statusClass = r.status === '貸出中' ? 'warning' : 'ok';
+        return `<div class="list-item"><div class="list-item-top"><div><h3>${escapeHtml(r.productName || r.model)}</h3><div class="muted tiny">貸出票No: ${escapeHtml(r.slipNo)} / 型番: ${escapeHtml(r.model)} / SN: ${escapeHtml(r.serial)}</div></div><span class="status ${statusClass}">${escapeHtml(r.status)}</span></div><div class="kvs"><div class="kv"><span>貸出先</span><strong>${escapeHtml(r.customer)}</strong></div><div class="kv"><span>担当営業</span><strong>${escapeHtml(r.sales)}</strong></div><div class="kv"><span>出荷日</span><strong>${escapeHtml(formatDateJP(r.loanDate))}</strong></div><div class="kv"><span>返却予定日</span><strong>${escapeHtml(formatDateJP(r.dueDate))}</strong></div><div class="kv"><span>返却状態</span><strong>${escapeHtml(r.returnCondition || '-')}</strong></div><div class="kv"><span>明細備考</span><strong>${escapeHtml(r.itemNote || '-')}</strong></div></div><div class="btn-row"><button class="ghost" onclick="copySerial('${escapeJs(r.serial)}')">返却画面へ</button><button class="secondary" onclick="previewSlip('${escapeJs(r.slipNo)}')">貸出票プレビュー</button></div></div>`;
+      }).join('');
+    }
+
+    function findItemBySerial(serial) {
+      for (let s = 0; s < state.slips.length; s++) {
+        const slip = state.slips[s];
+        for (let i = 0; i < slip.items.length; i++) {
+          if (slip.items[i].serial === serial) return { slipIndex: s, itemIndex: i };
+        }
+      }
+      return null;
+    }
+    function copySerial(serial) {
+      showScreen('return');
+      document.getElementById('returnSearch').value = serial;
+      searchReturn();
+    }
     function searchReturn() {
       const sn = document.getElementById('returnSearch').value.trim();
-      const row = state.history.find(r => r.serial === sn);
-      if (!row) { alert('該当する貸出データが見つかりません。'); return; }
+      const ref = findItemBySerial(sn);
+      if (!ref) { alert('該当する貸出データが見つかりません。'); return; }
+      currentReturnRef = ref;
+      const slip = state.slips[ref.slipIndex];
+      const item = slip.items[ref.itemIndex];
       document.getElementById('returnPanel').classList.remove('hidden');
-      document.getElementById('returnModel').textContent = row.model;
-      document.getElementById('returnSerial').textContent = 'SN: ' + row.serial;
-      document.getElementById('returnCustomer').textContent = row.customer;
-      document.getElementById('returnSales').textContent = row.sales;
-      document.getElementById('returnLoanDate').textContent = formatDateJP(row.loanDate);
-      document.getElementById('returnDueDate').textContent = formatDateJP(row.dueDate);
-      document.getElementById('returnCustomerLabel').textContent = row.status;
-      document.getElementById('returnMemo').value = row.memo || '';
-      currentCondition = row.returnCondition || '再貸出可';
+      document.getElementById('returnModel').textContent = item.model;
+      document.getElementById('returnSerial').textContent = 'SN: ' + item.serial;
+      document.getElementById('returnSlipNo').textContent = slip.slipNo;
+      document.getElementById('returnProductName').textContent = item.productName || '-';
+      document.getElementById('returnCustomer').textContent = slip.customer;
+      document.getElementById('returnSales').textContent = slip.sales;
+      document.getElementById('returnLoanDate').textContent = formatDateJP(slip.loanDate);
+      document.getElementById('returnDueDate').textContent = formatDateJP(slip.dueDate);
+      document.getElementById('returnCustomerLabel').textContent = item.status;
+      document.getElementById('returnMemo').value = item.returnMemo || item.itemNote || '';
+      currentCondition = item.returnCondition || '再貸出可';
       document.querySelectorAll('#conditionTabs button').forEach(btn => btn.classList.toggle('active', btn.dataset.cond === currentCondition));
     }
     function completeReturn() {
-      const sn = document.getElementById('returnSearch').value.trim();
-      const idx = state.history.findIndex(r => r.serial === sn);
-      if (idx < 0) { alert('対象データがありません。'); return; }
-      state.history[idx].status = '返却済';
-      state.history[idx].returnCondition = currentCondition;
-      state.history[idx].memo = document.getElementById('returnMemo').value.trim();
-      saveState(); alert('返却完了として保存しました。'); showScreen('history');
+      if (!currentReturnRef) { alert('対象データがありません。'); return; }
+      const item = state.slips[currentReturnRef.slipIndex].items[currentReturnRef.itemIndex];
+      item.status = '返却済';
+      item.returnCondition = currentCondition;
+      item.returnMemo = document.getElementById('returnMemo').value.trim();
+      saveState();
+      alert('返却完了として保存しました。');
+      showScreen('history');
     }
     function prepareReceiveMemo() {
-      const sn = document.getElementById('returnSearch').value.trim();
-      const row = state.history.find(r => r.serial === sn);
-      if (!row) { alert('対象データがありません。'); return; }
-      const msg = ['【FLAM受払メモ】','倉庫: デモ機','処理: 返却受入 / 受払入力','型番: ' + row.model,'シリアル番号: ' + row.serial,'返却状態: ' + currentCondition,'返却メモ: ' + (document.getElementById('returnMemo').value.trim() || '-')].join('\n');
+      if (!currentReturnRef) { alert('対象データがありません。'); return; }
+      const slip = state.slips[currentReturnRef.slipIndex];
+      const item = slip.items[currentReturnRef.itemIndex];
+      const msg = ['【FLAM受払メモ】','倉庫: デモ機','処理: 返却受入 / 受払入力',`貸出票No: ${slip.slipNo}`,'型番: ' + item.model,'シリアル番号: ' + item.serial,'返却状態: ' + currentCondition,'返却メモ: ' + (document.getElementById('returnMemo').value.trim() || '-')].join('\n');
       alert(msg);
     }
-    function previewSlip(id) {
-      const row = state.history.find(r => r.id === id); if (!row) return;
-      openSlipWindow(row);
+    function previewSlip(slipNo) {
+      const slip = state.slips.find(x => x.slipNo === slipNo);
+      if (!slip) return;
+      openSlipWindow(slip);
     }
     function escapeHtml(str) { return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
     function escapeJs(str) { return String(str).replace(/['\\]/g, '\\$&'); }
@@ -612,29 +816,25 @@
       const reticle = document.getElementById('scanReticle');
       if (!navigator.mediaDevices?.getUserMedia) { alert('このブラウザではカメラ機能を利用できません。'); return; }
       try {
-        mediaStream = await navigator.mediaDevices.getUserMedia({
-          video:{ facingMode:{ ideal:'environment' }, width:{ ideal:1920 }, height:{ ideal:1080 } }, audio:false
-        });
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' }, width:{ ideal:1920 }, height:{ ideal:1080 } }, audio:false });
         video.srcObject = mediaStream;
         video.style.display = 'block';
         reticle.style.display = 'block';
         await video.play();
         startDecodeLoop(video);
-      } catch (e) {
-        alert('カメラを起動できませんでした。権限設定をご確認ください。');
-      }
+      } catch (e) { alert('カメラを起動できませんでした。権限設定をご確認ください。'); }
     }
     function startDecodeLoop(video) {
       const canvas = document.getElementById('scanCanvas');
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      const useNative = 'BarcodeDetector' in window;
+      const hasNative = 'BarcodeDetector' in window;
       let detector = null;
-      if (useNative) detector = new BarcodeDetector({ formats:['qr_code'] });
+      if (hasNative) detector = new BarcodeDetector({ formats:['qr_code'] });
       if (scanTimer) clearInterval(scanTimer);
       scanTimer = setInterval(async () => {
         if (!video.videoWidth || !video.videoHeight) return;
         try {
-          if (useNative) {
+          if (hasNative) {
             const codes = await detector.detect(video);
             if (codes.length && codes[0].rawValue) {
               document.getElementById('qrInput').value = codes[0].rawValue;
@@ -705,7 +905,7 @@
 
     document.querySelectorAll('.nav-btn, .quick-btn').forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.nav)));
     document.getElementById('parseBtn').addEventListener('click', fillParsed);
-    document.getElementById('saveLoanBtn').addEventListener('click', saveLoan);
+    document.getElementById('saveLoanBtn').addEventListener('click', saveLoanSlip);
     document.getElementById('mockFlamBtn').addEventListener('click', buildFlamMemo);
     document.getElementById('openPrintBtn').addEventListener('click', openPrintMock);
     document.getElementById('historySearchBtn').addEventListener('click', () => renderHistory(document.getElementById('historyKeyword').value));
@@ -717,11 +917,16 @@
     document.getElementById('sales').addEventListener('change', toggleSalesCustom);
     document.getElementById('adminSearchBtn').addEventListener('click', renderAdminTable);
     document.getElementById('imageQrInput').addEventListener('change', e => decodeImageFile(e.target.files[0]));
+    document.getElementById('addLineBtn').addEventListener('click', addDraftLine);
+    document.getElementById('clearLineBtn').addEventListener('click', clearLineInputs);
+    document.getElementById('modelNo').addEventListener('input', () => updateProductNameFromModel(false));
+    document.getElementById('productName').addEventListener('input', () => { document.getElementById('productName').dataset.manual = '1'; });
     document.querySelectorAll('.sample-qr').forEach(btn => btn.addEventListener('click', () => { document.getElementById('qrInput').value = btn.dataset.sample; fillParsed(); }));
     document.querySelectorAll('#conditionTabs button').forEach(btn => btn.addEventListener('click', () => { currentCondition = btn.dataset.cond; document.querySelectorAll('#conditionTabs button').forEach(x => x.classList.toggle('active', x === btn)); }));
 
     setTodayBadge();
     updateStandaloneState();
+    renderDraftItems();
     renderHistory();
     renderAdminTable();
     renderSummary();
