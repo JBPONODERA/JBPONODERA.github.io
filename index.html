@@ -143,12 +143,16 @@
     @media (max-width: 900px) { .grid-4 { grid-template-columns:repeat(2,1fr); } }
     @media (max-width: 720px) {
       .app { padding-left:10px; padding-right:10px; }
-      .quick-grid { grid-template-columns:repeat(2,1fr); }
+      .quick-grid { grid-template-columns:repeat(4,1fr); gap:6px; }
       .grid-2, .grid-3, .grid-4, .two-actions { grid-template-columns:1fr; }
       .kvs { grid-template-columns:1fr; }
-      h1 { font-size:18px; }
-      .subtitle { display:none; }
-      .hero-card { padding:10px 12px; }
+      h1 { font-size:16px; }
+      .subtitle, .quick-btn small, #installTip { display:none; }
+      .hero { padding:4px 0 6px; }
+      .hero-top { margin-bottom:6px; }
+      .hero-card { padding:6px 8px; border-radius:16px; }
+      .quick-btn { padding:7px 6px; font-size:12px; text-align:center; }
+      .badge { padding:4px 8px; font-size:10px; }
       .desktop-only { display:none; }
       .mobile-only { display:block; }
     }
@@ -167,10 +171,10 @@
           <div class="badge" id="todayBadge">日付</div>
         </div>
         <div class="quick-grid">
-          <button class="quick-btn" data-nav="loan">貸出登録<small>QR読取→明細追加</small></button>
-          <button class="quick-btn" data-nav="return">返却登録<small>シリアル単位返却</small></button>
-          <button class="quick-btn" data-nav="history">履歴一覧<small>検索・印刷</small></button>
-          <button class="quick-btn" data-nav="home">管理概要<small>PC向け一覧</small></button>
+          <button class="quick-btn" data-nav="loan">貸出<small>登録</small></button>
+          <button class="quick-btn" data-nav="return">返却<small>処理</small></button>
+          <button class="quick-btn" data-nav="history">履歴<small>検索</small></button>
+          <button class="quick-btn" data-nav="home">管理<small>一覧</small></button>
         </div>
         <div class="install-tip" id="installTip">
           <strong>iPhoneでの追加方法</strong>
@@ -224,6 +228,7 @@
     <section id="screen-loan" class="section screen hidden">
       <div class="card">
         <div class="section-title"><h2>貸出登録</h2><span class="status ok">STEP 1</span></div>
+        <div class="callout">推奨フロー：iPhone標準QRで読取 → コピー → この画面で取込 → 貸出票保存 → FLAMログイン画面へ移動 → デモ機在庫を出庫調整</div>
 
         <div class="grid-2">
           <div><label for="customer">貸出先</label><input id="customer" placeholder="会社名 / 担当者名" /></div>
@@ -249,21 +254,21 @@
         <div class="scan-box">
           <label for="qrInput">QRコード内容</label>
           <textarea id="qrInput" placeholder="例: BC-SCS2M10X1H_23050060"></textarea>
-          <div class="camera-wrap">
+          <div class="camera-wrap hidden">
             <video id="cameraPreview" class="camera" autoplay playsinline muted></video>
             <div id="scanReticle" class="scan-reticle"></div>
           </div>
           <canvas id="scanCanvas" class="hidden"></canvas>
           <div class="btn-row">
-            <button class="primary" id="clipboardBtn">クリップボードから取込</button>
-            <button class="ghost" id="iosGuideBtn">iPhone標準QRの使い方</button>
-            <button class="secondary" id="startScanBtn">ライブ読取開始（参考）</button>
-            <button class="ghost" id="stopScanBtn">ライブ読取停止</button>
-            <button class="warn" id="stillScanBtn">静止画高精度読取</button>
-            <button class="ghost" id="parseBtn">型番/SNを抽出</button>
+            <button class="primary" id="clipboardBtn">① クリップボードから取込</button>
+            <button class="secondary" id="parseBtn">② 型番/SNを反映</button>
+            <button class="ghost" id="iosGuideBtn">使い方</button>
             <label class="file-btn">画像から読取<input id="imageQrInput" type="file" accept="image/*" capture="environment" class="hidden" /></label>
+            <button class="secondary hidden" id="startScanBtn">ライブ読取開始</button>
+            <button class="ghost hidden" id="stopScanBtn">ライブ読取停止</button>
+            <button class="warn hidden" id="stillScanBtn">静止画高精度読取</button>
           </div>
-          <div class="scan-tools">
+          <div class="scan-tools hidden">
             <div>
               <label for="zoomRange">読取ズーム（10mm QR向け）</label>
               <div class="range-wrap">
@@ -273,7 +278,7 @@
             </div>
             <button class="warn" id="boostScanBtn">拡大読取ON</button>
           </div>
-          <div id="scanStatus" class="scan-status">推奨フロー：iPhone標準QRで読取 → コピー → クリップボードから取込</div>
+          <div id="scanStatus" class="scan-status">推奨フロー：iPhone標準QRで読取 → コピー → 「クリップボードから取込」</div>
           <div class="hint">10mm QRはかなり小さいため、ライブ読取よりも iPhone標準QRアプリで読んだ結果を本画面へ取り込む方式を推奨します。</div>
           <div class="chips">
             <button class="chip sample-qr" data-sample="BC-SCS2M10X1H_23050060">実サンプル形式</button>
@@ -300,9 +305,9 @@
         <div class="draft-header"><h2 style="margin:0;font-size:18px;">現在の貸出票</h2><span class="mini-badge" id="draftCountBadge">0明細</span></div>
         <div id="draftLines" class="draft-box"></div>
         <div class="btn-row">
-          <button class="secondary" id="openPrintBtn">貸出票プレビューを開く</button>
-          <button class="ghost" id="mockFlamBtn">FLAM登録用メモを表示</button>
-          <button class="primary" id="saveLoanBtn">貸出票として保存</button>
+          <button class="secondary" id="openPrintBtn">貸出票プレビュー</button>
+          <button class="ghost" id="mockFlamBtn">FLAM登録用メモ</button>
+          <button class="primary" id="saveLoanBtn">貸出票保存 → FLAMへ</button>
         </div>
       </div>
     </section>
@@ -310,6 +315,7 @@
     <section id="screen-return" class="section screen hidden">
       <div class="card">
         <div class="section-title"><h2>返却登録</h2><span class="status warning">STEP 2</span></div>
+        <div class="callout">返却完了後は FLAMログイン画面へ移動し、デモ機在庫を入庫調整する運用を想定しています。</div>
         <div class="grid-2">
           <div><label for="returnSearch">シリアル番号検索</label><input id="returnSearch" placeholder="シリアル番号で検索" /></div>
           <div style="display:flex; align-items:flex-end;"><button class="secondary" id="searchReturnBtn" style="width:100%;">貸出データを呼び出す</button></div>
@@ -334,7 +340,7 @@
             <button data-cond="付属品不足">付属品不足</button>
           </div>
           <div style="margin-top:12px;"><label for="returnMemo">返却メモ</label><textarea id="returnMemo" placeholder="欠品・傷・不具合内容など"></textarea></div>
-          <div class="two-actions" style="margin-top:12px;"><button class="primary" id="completeReturnBtn">返却完了として保存</button><button class="ghost" id="prepareReceiveBtn">FLAM受払メモを表示</button></div>
+          <div class="two-actions" style="margin-top:12px;"><button class="primary" id="completeReturnBtn">返却完了 → FLAMへ</button><button class="ghost" id="prepareReceiveBtn">FLAM受払メモを表示</button></div>
         </div>
       </div>
     </section>
@@ -361,7 +367,8 @@
 
   <script src="./lib/jsqr.min.js"></script>
   <script>
-    const STORAGE_KEY = 'demo-device-pwa-prototype-v5';
+    const STORAGE_KEY = 'demo-device-pwa-prototype-v6';
+    const FLAM_LOGIN_URL = 'https://bozhonjapan.flam.bz/login';
     const screens = ['home', 'loan', 'return', 'history'];
     const SALES_EMAILS = {
       '竹越': 'takegoshi@bopixel.co.jp',
@@ -648,8 +655,7 @@
       draftItems = [];
       renderDraftItems();
       clearLineInputs();
-      alert('貸出票を保存しました。');
-      showScreen('history');
+      goToFlam('貸出票を保存しました。出庫分の在庫数をFLAMで調整してください。');
     }
     function buildFlamMemo() {
       const slip = currentSlipFromForm();
@@ -816,8 +822,7 @@
       item.returnCondition = currentCondition;
       item.returnMemo = document.getElementById('returnMemo').value.trim();
       saveState();
-      alert('返却完了として保存しました。');
-      showScreen('history');
+      goToFlam('返却処理を保存しました。入庫分の在庫数をFLAMで調整してください。');
     }
     function prepareReceiveMemo() {
       if (!currentReturnRef) { alert('対象データがありません。'); return; }
@@ -844,10 +849,15 @@
         '1. コントロールセンターの「コードスキャナー」またはカメラを起動',
         '2. QRを読み取って、表示された文字列をコピー',
         '3. このPWAへ戻る',
-        '4. 「クリップボードから取込」を押す',
+        '4. 「① クリップボードから取込」を押す',
+        '5. 必要に応じて「② 型番/SNを反映」を押す',
         '',
         '※ QRの内容が URL ではなく「BC-SCS2M10X1H_23050060」のような文字列であることを想定しています。'
       ].join('\n'));
+    }
+    function goToFlam(nextAction) {
+      alert(`${nextAction}\nこのあとFLAMログイン画面へ移動します。ログイン後、デモ機在庫数を調整してください。`);
+      window.location.href = FLAM_LOGIN_URL;
     }
     async function importFromClipboard() {
       if (!navigator.clipboard || !navigator.clipboard.readText) {
