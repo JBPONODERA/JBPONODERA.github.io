@@ -257,12 +257,13 @@
           <div class="btn-row">
             <button class="secondary" id="startScanBtn">カメラ読取開始</button>
             <button class="ghost" id="stopScanBtn">カメラ停止</button>
+            <button class="warn" id="stillScanBtn">静止画高精度読取</button>
             <button class="primary" id="parseBtn">型番/SNを抽出</button>
             <label class="file-btn">画像から読取<input id="imageQrInput" type="file" accept="image/*" capture="environment" class="hidden" /></label>
           </div>
           <div class="scan-tools">
             <div>
-              <label for="zoomRange">読取ズーム</label>
+              <label for="zoomRange">読取ズーム（10mm QR向け）</label>
               <div class="range-wrap">
                 <input id="zoomRange" type="range" min="1" max="4" step="0.1" value="2" />
                 <span id="zoomValue" class="range-value">2.0x</span>
@@ -271,6 +272,7 @@
             <button class="warn" id="boostScanBtn">拡大読取ON</button>
           </div>
           <div id="scanStatus" class="scan-status">カメラ未起動</div>
+          <div class="hint">10mm QRはかなり小さいため、枠の中央にQRだけを大きく入れ、ズームを 3.0x〜4.0x にすると安定しやすいです。難しい場合は「静止画高精度読取」を試してください。</div>
           <div class="chips">
             <button class="chip sample-qr" data-sample="BC-SCS2M10X1H_23050060">実サンプル形式</button>
             <button class="chip sample-qr" data-sample="MODEL=4K-CAM-200;SN=JP2026-000128;BOX=DEMO;LOT=A01">サンプル2</button>
@@ -382,6 +384,7 @@
     let currentReturnRef = null;
     let draftItems = [];
     let boostedScan = true;
+    let liveAttempts = 0;
 
     function defaultState() {
       return {
@@ -844,14 +847,19 @@
         return;
       }
       const caps = track.getCapabilities();
+      try {
+        if (caps.focusMode && track.applyConstraints) {
+          await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
+        }
+      } catch (e) {}
       if (!caps.zoom) {
         updateScanStatus('カメラ起動中 / ズーム制御未対応');
         return;
       }
       range.min = caps.zoom.min || 1;
-      range.max = Math.min(caps.zoom.max || 4, 6);
+      range.max = Math.min(caps.zoom.max || 4, 8);
       range.step = caps.zoom.step || 0.1;
-      const preferred = Math.min(Math.max(2, Number(range.min)), Number(range.max));
+      const preferred = Math.min(Math.max(3.5, Number(range.min)), Number(range.max));
       range.value = preferred;
       updateZoomValue(range.value);
       await applyCameraZoom(preferred);
@@ -870,8 +878,25 @@
         updateScanStatus('カメラ起動中 / ズーム変更失敗');
       }
     }
+    function thresholdImageData(imageData, threshold) {
+      const out = new Uint8ClampedArray(imageData.data.length);
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        const g = 0.299 * imageData.data[i] + 0.587 * imageData.data[i + 1] + 0.114 * imageData.data[i + 2];
+        const v = g >= threshold ? 255 : 0;
+        out[i] = v; out[i + 1] = v; out[i + 2] = v; out[i + 3] = 255;
+      }
+      return new ImageData(out, imageData.width, imageData.height);
+    }
     function tryDecodeImageData(imageData) {
-      return window.jsQR ? window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' }) : null;
+      if (!window.jsQR) return null;
+      const normal = window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+      if (normal && normal.data) return normal;
+      for (const th of [96, 128, 160, 192]) {
+        const bin = thresholdImageData(imageData, th);
+        const decoded = window.jsQR(bin.data, bin.width, bin.height, { inversionAttempts: 'attemptBoth' });
+        if (decoded && decoded.data) return decoded;
+      }
+      return null;
     }
     async function detectNative(detector, source) {
       try {
@@ -881,12 +906,15 @@
         return '';
       }
     }
-    async function decodeFromSource(source, srcW, srcH, detector, canvas, ctx) {
-      const roiBase = boostedScan ? [1.0, 0.84, 0.68, 0.54, 0.42, 0.32] : [1.0, 0.74, 0.54];
-      const filters = boostedScan
-        ? ['none', 'grayscale(1) contrast(1.35)', 'grayscale(1) contrast(1.9) brightness(1.08)']
-        : ['none', 'grayscale(1) contrast(1.25)'];
-      const targetWidths = boostedScan ? [1280, 1600, 1920] : [1280];
+    async function decodeFromSource(source, srcW, srcH, detector, canvas, ctx, profile = 'live') {
+      const isTiny = profile === 'tiny';
+      const roiBase = isTiny
+        ? [0.42, 0.32, 0.24, 0.18, 0.14, 0.10, 0.08]
+        : (boostedScan ? [0.84, 0.68, 0.54, 0.42, 0.32, 0.24, 0.18, 0.14] : [0.84, 0.68, 0.54, 0.42]);
+      const filters = isTiny
+        ? ['none', 'grayscale(1) contrast(1.6)', 'grayscale(1) contrast(2.2) brightness(1.12)', 'grayscale(1) contrast(2.8) brightness(1.2)']
+        : (boostedScan ? ['none', 'grayscale(1) contrast(1.35)', 'grayscale(1) contrast(1.9) brightness(1.08)'] : ['none', 'grayscale(1) contrast(1.25)']);
+      const targetWidths = isTiny ? [1600, 2200, 2800] : (boostedScan ? [1280, 1600, 1920, 2200] : [1280]);
       for (const roi of roiBase) {
         const sw = Math.max(160, Math.floor(srcW * roi));
         const sh = Math.max(160, Math.floor(srcH * roi));
@@ -920,15 +948,36 @@
       if (!navigator.mediaDevices?.getUserMedia) { alert('このブラウザではカメラ機能を利用できません。'); return; }
       try {
         updateScanStatus('カメラ起動中...');
-        mediaStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' }, width:{ ideal:2560 }, height:{ ideal:1440 } }, audio:false });
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' }, width:{ ideal:3840 }, height:{ ideal:2160 } }, audio:false });
         currentTrack = mediaStream.getVideoTracks()[0] || null;
         video.srcObject = mediaStream;
         video.style.display = 'block';
         reticle.style.display = 'block';
         await video.play();
         await setupZoomControl(currentTrack);
+        liveAttempts = 0;
         startDecodeLoop(video);
       } catch (e) { updateScanStatus('カメラ起動失敗'); alert('カメラを起動できませんでした。権限設定をご確認ください。'); }
+    }
+    async function captureAndDecodeStill() {
+      const video = document.getElementById('cameraPreview');
+      if (!video.videoWidth || !video.videoHeight) {
+        alert('先にカメラを起動してください。');
+        return;
+      }
+      updateScanStatus('静止画高精度読取中...');
+      const canvas = document.getElementById('scanCanvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const detector = 'BarcodeDetector' in window ? new BarcodeDetector({ formats:['qr_code'] }) : null;
+      const decoded = await decodeFromSource(video, video.videoWidth, video.videoHeight, detector, canvas, ctx, 'tiny');
+      if (decoded) {
+        document.getElementById('qrInput').value = decoded;
+        fillParsed();
+        stopCamera();
+      } else {
+        updateScanStatus('静止画でも未検出 / QRをさらに中央・至近にしてください');
+        alert('静止画高精度読取でも検出できませんでした。QRを枠いっぱいに近づけて再試行してください。');
+      }
     }
     function startDecodeLoop(video) {
       const canvas = document.getElementById('scanCanvas');
@@ -936,11 +985,10 @@
       const hasNative = 'BarcodeDetector' in window;
       let detector = null;
       if (hasNative) detector = new BarcodeDetector({ formats:['qr_code'] });
-      let attempts = 0;
       if (scanTimer) clearInterval(scanTimer);
       scanTimer = setInterval(async () => {
         if (!video.videoWidth || !video.videoHeight) return;
-        attempts += 1;
+        liveAttempts += 1;
         try {
           if (detector) {
             const raw = await detectNative(detector, video);
@@ -951,18 +999,19 @@
               return;
             }
           }
-          const decoded = await decodeFromSource(video, video.videoWidth, video.videoHeight, detector, canvas, ctx);
+          const profile = liveAttempts >= 8 ? 'tiny' : 'live';
+          const decoded = await decodeFromSource(video, video.videoWidth, video.videoHeight, detector, canvas, ctx, profile);
           if (decoded) {
             document.getElementById('qrInput').value = decoded;
             fillParsed();
             stopCamera();
             return;
           }
-          if (attempts % 5 === 0) {
-            updateScanStatus(`読取中... 中央に寄せてください / ${boostedScan ? '拡大読取ON' : '標準読取'}`);
+          if (liveAttempts % 4 === 0) {
+            updateScanStatus(`読取中... 中央に寄せてください / ${profile === 'tiny' ? '極小QRモード' : (boostedScan ? '拡大読取ON' : '標準読取')}`);
           }
         } catch (e) {}
-      }, 350);
+      }, 420);
     }
     function stopCamera() {
       if (scanTimer) clearInterval(scanTimer); scanTimer = null;
@@ -1012,6 +1061,7 @@
     document.getElementById('prepareReceiveBtn').addEventListener('click', prepareReceiveMemo);
     document.getElementById('startScanBtn').addEventListener('click', startCamera);
     document.getElementById('stopScanBtn').addEventListener('click', stopCamera);
+    document.getElementById('stillScanBtn').addEventListener('click', captureAndDecodeStill);
     document.getElementById('zoomRange').addEventListener('input', e => applyCameraZoom(e.target.value));
     document.getElementById('boostScanBtn').addEventListener('click', () => {
       boostedScan = !boostedScan;
